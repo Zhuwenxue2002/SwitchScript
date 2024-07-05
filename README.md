@@ -4,7 +4,7 @@
 
 **_支持大气层版本：1.7.1_**
 
-**_支持hekate版本：6.2.0_**
+**_支持hekate版本：6.2.1_**
 
 - 此项目脚本fork自[huangqian8/SwitchScript: 大气层个人整合包生成脚本 (github.com)](https://github.com/huangqian8/SwitchScript)，由xiaobai进行精简
 
