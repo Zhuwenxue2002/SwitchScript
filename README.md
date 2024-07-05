@@ -97,6 +97,7 @@
 - 2024-06-20：恢复sys-con集成，更改sys-patch和sigpatchs为gba论坛版本
 - 2024-06-20：尝试精简掉sigpatches，因为每一个版本都更新太费劲了，开系统还容易提示错误（紧跟huangqian8大佬的脚步）
 - 2024-06-20：删除hekate_ipl.ini in /bootloader/文件中的 kip1patch=nosigchk字段，因为精简了sigpatches，不删除这个字段开机会报一个小错误
+- 2024-07-05：更新hekate版本号
 
 
 # Tesla
