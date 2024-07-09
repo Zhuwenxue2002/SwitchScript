@@ -518,49 +518,27 @@ else
     echo "Writing config.ini in ./config/tesla\033[32m success\033[0m."
 fi
 
-
-### 极限超频
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
-  | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC_Toolkit[^"]*.zip"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o OC_Toolkit.zip
+### Fetch Tesla-Menu
+### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
+curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Tesla-Menu.zip -o Tesla-Menu.zip
 if [ $? -ne 0 ]; then
-    echo "OC_Toolkit download\033[31m failed\033[0m."
+    echo "Tesla-Menu download\033[31m failed\033[0m."
 else
-    echo "OC_Toolkit download\033[32m success\033[0m."
-    unzip -oq OC_Toolkit.zip
-    rm OC_Toolkit.zip
-    mkdir -p ./switch/.packages
-    mv "OC Switchcraft EOS" ./switch/.packages
+    echo "Tesla-Menu download\033[32m success\033[0m."
+    unzip -oq Tesla-Menu.zip
+    rm Tesla-Menu.zip
 fi
 
-
-#### Fetch Tesla-Menu
-#### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Tesla-Menu.zip -o Tesla-Menu.zip
-#if [ $? -ne 0 ]; then
-#    echo "Tesla-Menu download\033[31m failed\033[0m."
-#else
-#    echo "Tesla-Menu download\033[32m success\033[0m."
-#    unzip -oq Tesla-Menu.zip
-#    rm Tesla-Menu.zip
-#fi
-
-#### Write sort.cfg in /config/Tesla-Menu/sort.cfg
-#cat > ./config/Tesla-Menu/sort.cfg << ENDOFFILE
-#EdiZon
-#ovl-sysmodules
-#StatusMonitor
-#sys-clk-overlay
-#ReverseNX-RT
-#QuickNTP
-#sys-patch-overlay
-#ENDOFFILE
-
+### Write sort.cfg in /config/Tesla-Menu/sort.cfg
+cat > ./config/Tesla-Menu/sort.cfg << ENDOFFILE
+EdiZon
+ovl-sysmodules
+StatusMonitor
+sys-clk-overlay
+ReverseNX-RT
+QuickNTP
+sys-patch-overlay
+ENDOFFILE
 
 ### Fetch EdiZon
 curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/EdiZon.zip -o EdiZon.zip
@@ -592,14 +570,14 @@ else
     rm StatusMonitor.zip
 fi
 
-### Fetch sys-clk-oc
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk.zip
+### Fetch sys-clk
+curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk.zip -o sys-clk.zip
 if [ $? -ne 0 ]; then
-    echo "sys-clk-oc download\033[31m failed\033[0m."
+    echo "sys-clk download\033[31m failed\033[0m."
 else
-    echo "sys-clk-oc download\033[32m success\033[0m."
-    unzip -oq sys-clk-oc.zip
-    rm sys-clk-oc.zip
+    echo "sys-clk download\033[32m success\033[0m."
+    unzip -oq sys-clk.zip
+    rm sys-clk.zip
 fi
 
 ### Fetch ReverseNX-RT
@@ -677,7 +655,7 @@ fi
 # -------------------------------------------
 cat >> ../description.txt << ENDOFFILE
 nx-ovlloader
-Ultrahand
+Tesla-Menu
 EdiZon
 ovl-sysmodules
 StatusMonitor
