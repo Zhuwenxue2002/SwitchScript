@@ -718,6 +718,7 @@ fss0=atmosphere/package3
 atmosphere=1
 icon=bootloader/res/icon_Atmosphere_emunand.bmp
 id=cfw-emu
+kip1=atmosphere/kips/loader.kip
 
 [CFW (sysMMC)]
 emummc_force_disable=1
@@ -725,6 +726,7 @@ fss0=atmosphere/package3
 atmosphere=1
 icon=bootloader/res/icon_Atmosphere_sysnand.bmp
 id=cfw-sys
+kip1=atmosphere/kips/loader.kip
 
 [Stock SysNAND]
 emummc_force_disable=1
