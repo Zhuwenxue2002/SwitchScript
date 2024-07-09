@@ -518,6 +518,24 @@ else
     echo "Writing config.ini in ./config/tesla\033[32m success\033[0m."
 fi
 
+### 极限超频的kip
+### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*kip.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o kip.zip
+if [ $? -ne 0 ]; then
+    echo "kip download\033[31m failed\033[0m."
+else
+    echo "kip download\033[32m success\033[0m."
+    unzip -oq kip.zip
+    rm kip.zip
+    mkdir -p ./atmosphere/kips
+    mv loader.kip ./atmosphere/kips
+fi
 
 ### 极限超频
 ### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
