@@ -522,7 +522,7 @@ fi
 ### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
 curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
   | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
+  | xargs -I {} echo kip {} >> ../description.txt
 curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*kip.zip"' \
   | sed 's/"//g' \
