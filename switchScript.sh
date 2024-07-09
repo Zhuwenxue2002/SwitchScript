@@ -593,7 +593,7 @@ else
 fi
 
 ### Fetch sys-clk-oc
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk.zip
+curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
 if [ $? -ne 0 ]; then
     echo "sys-clk-oc download\033[31m failed\033[0m."
 else
