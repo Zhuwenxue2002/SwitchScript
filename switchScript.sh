@@ -539,6 +539,17 @@ else
 fi
 
 
+### Fetch Ultrahand
+### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
+curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+if [ $? -ne 0 ]; then
+    echo "Ultrahand download\033[31m failed\033[0m."
+else
+    echo "Ultrahand download\033[32m success\033[0m."
+    unzip -oq Ultrahand.zip
+    rm Ultrahand.zip
+fi
+
 #### Fetch Tesla-Menu
 #### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
 #curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Tesla-Menu.zip -o Tesla-Menu.zip
