@@ -140,9 +140,13 @@ A大曾经讲过从1.7.0开始，sigpatch签名补丁的三种解决方案
 
 我明白很多萌新玩家对于超频这个词汇感到陌生和恐慌，但其实稍微了解就明白其中原理了
 
-这个up讲的就很清楚
+~~这个up讲的就很清楚~~
 
-https://www.bilibili.com/video/BV1V7421Z71A/?spm_id_from=333.337.search-card.all.click
+~~https://www.bilibili.com/video/BV1V7421Z71A/?spm_id_from=333.337.search-card.all.click~~
+
+不知道什么原因，这个UP把我t出群里了，但他的文章也只是翻译和搬运国外大佬的研究，所以，I don't care
+
+https://rentry.co/ocsc 这个网站则是国外大佬出版的超频教程，随便用浏览器的翻译插件都可以明白其大致意思
 
 在这里我做一个总结：
 
