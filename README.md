@@ -43,7 +43,7 @@
     - [x] nro插件商店 `hb-appstore` [From Here](https://github.com/fortheusers/hb-appstore)
   - Tesla
     - [x] 加载器 `nx-ovlloader` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 初始菜单 `Tesla-Menu` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
+    - [x] 初始菜单 `Ultrahand` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
   - Ovl插件
     - [x] 金手指工具 `EdiZon` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统模块 `ovl-sysmodules` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
@@ -99,6 +99,7 @@
 - 2024-06-20：删除hekate_ipl.ini in /bootloader/文件中的 kip1patch=nosigchk字段，因为精简了sigpatches，不删除这个字段开机会报一个小错误
 - 2024-07-05：更新hekate版本号
 - 2024-07-10：替换tesla-menu，替换sys-clk，更新极限超频套件
+- 2024-07-20：zdm大佬的TegraExplorer插件删除发布，更改由原版地址拉取插件
 
 
 # Tesla

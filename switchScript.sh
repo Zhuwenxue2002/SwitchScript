@@ -141,11 +141,11 @@ else
     mv Lockpick_RCM.bin ./bootloader/payloads
 fi
 
-### Fetch latest TegraExplorer.bin form https://github.com/zdm65477730/TegraExplorer/releases
-curl -sL https://api.github.com/repos/zdm65477730/TegraExplorer/releases/latest \
+### Fetch latest TegraExplorer.bin form https://github.com/suchmememanyskill/TegraExplorer/releases
+curl -sL https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/latest \
   | jq '.tag_name' \
   | xargs -I {} echo TegraExplorer {} >> ../description.txt
-curl -sL https://api.github.com/repos/zdm65477730/TegraExplorer/releases/latest \
+curl -sL https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*TegraExplorer.bin"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o TegraExplorer.bin
