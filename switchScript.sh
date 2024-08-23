@@ -557,15 +557,59 @@ else
 fi
 
 
-### Fetch Ultrahand
-### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+#### Fetch Ultrahand
+#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+#if [ $? -ne 0 ]; then
+#    echo "Ultrahand download\033[31m failed\033[0m."
+#else
+#    echo "Ultrahand download\033[32m success\033[0m."
+#    unzip -oq Ultrahand.zip
+#    rm Ultrahand.zip
+#fi
+
+#### Fetch Ultrahand
+#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+#if [ $? -ne 0 ]; then
+#    echo "Ultrahand download\033[31m failed\033[0m."
+#else
+#    echo "Ultrahand download\033[32m success\033[0m."
+#    unzip -oq Ultrahand.zip
+#    rm Ultrahand.zip
+#fi
+
+### 特斯拉官方初始菜单Ultrahand
+### Fetch lastest Ultrahand from https://github.com/ppkantorski/Ultrahand-Overlay/releases/latest
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ovlmenu.ovl"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ovlmenu.ovl
 if [ $? -ne 0 ]; then
-    echo "Ultrahand download\033[31m failed\033[0m."
+    echo "ovlmenu.ovl\033[31m failed\033[0m."
 else
-    echo "Ultrahand download\033[32m success\033[0m."
-    unzip -oq Ultrahand.zip
-    rm Ultrahand.zip
+    echo "ovlmenu.ovl\033[32m success\033[0m."
+    mkdir -p ./switch/.overlay
+    mv ovlmenu.ovl ./switch/.overlays
+fi
+### 特斯拉官方初始菜单Ultrahand的汉化包
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo lang {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o lang.zip
+if [ $? -ne 0 ]; then
+    echo "lang.zip\033[31m failed\033[0m."
+else
+    echo "lang.zip\033[32m success\033[0m."
+    mkdir -p ./config/Ultrahand/lang
+    unzip -oq lang.zip ./config/Ultrahand/lang
+    rm lang.zip
 fi
 
 #### Fetch Tesla-Menu
@@ -706,7 +750,6 @@ fi
 # -------------------------------------------
 cat >> ../description.txt << ENDOFFILE
 nx-ovlloader
-Ultrahand
 EdiZon
 ovl-sysmodules
 StatusMonitor
