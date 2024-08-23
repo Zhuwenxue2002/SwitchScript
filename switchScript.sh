@@ -608,8 +608,9 @@ if [ $? -ne 0 ]; then
 else
     echo "lang.zip\033[32m success\033[0m."
     mkdir -p ./config/Ultrahand/lang
-    unzip -oq lang.zip ./config/Ultrahand/lang
+    unzip -oq lang.zip
     rm lang.zip
+    mv zh-cn.json ./config/Ultrahand/lang
 fi
 
 #### Fetch Tesla-Menu
