@@ -600,7 +600,7 @@ curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/lat
   | jq '.name' \
   | xargs -I {} echo lang {} >> ../description.txt
 curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip"' \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip[^"]*"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o lang.zip
 if [ $? -ne 0 ]; then
