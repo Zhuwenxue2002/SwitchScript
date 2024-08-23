@@ -742,7 +742,7 @@ if [ $? -ne 0 ]; then
     echo "lang.zip\033[31m failed\033[0m."
 else
     echo "lang.zip\033[32m success\033[0m."
-    mkdir -p ./config/Ultrahand/lang
+    mkdir -p ./config/ultrahand/lang
     unzip -oq lang.zip
     rm lang.zip
     mv de.json ./config/Ultrahand/lang
