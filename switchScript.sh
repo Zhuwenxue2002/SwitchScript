@@ -481,7 +481,7 @@ fi
 ## Fetch lastest sys-con from https://github.com/o0Zz/sys-con/releases/latest
 curl -sL https://api.github.com/repos/o0Zz/sys-con/releases/latest \
   | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
+  | xargs -I {} echo sys-con {} >> ../description.txt
 curl -sL https://api.github.com/repos/o0Zz/sys-con/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-con[^"]*.zip"' \
   | sed 's/"//g' \
