@@ -579,40 +579,6 @@ fi
 #    rm Ultrahand.zip
 #fi
 
-### 特斯拉官方初始菜单Ultrahand
-### Fetch lastest Ultrahand from https://github.com/ppkantorski/Ultrahand-Overlay/releases/latest
-curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
-  | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
-curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*ovlmenu.ovl"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o ovlmenu.ovl
-if [ $? -ne 0 ]; then
-    echo "ovlmenu.ovl\033[31m failed\033[0m."
-else
-    echo "ovlmenu.ovl\033[32m success\033[0m."
-    mkdir -p ./switch/.overlay
-    mv ovlmenu.ovl ./switch/.overlays
-fi
-### 特斯拉官方初始菜单Ultrahand的汉化包
-curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
-  | jq '.name' \
-  | xargs -I {} echo lang {} >> ../description.txt
-curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip[^"]*"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o lang.zip
-if [ $? -ne 0 ]; then
-    echo "lang.zip\033[31m failed\033[0m."
-else
-    echo "lang.zip\033[32m success\033[0m."
-    mkdir -p ./config/Ultrahand/lang
-    unzip -oq lang.zip
-    rm lang.zip
-    mv zh-cn.json ./config/Ultrahand/lang
-fi
-
 #### Fetch Tesla-Menu
 #### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
 #curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Tesla-Menu.zip -o Tesla-Menu.zip
@@ -747,6 +713,40 @@ fi
 #    unzip -oq SysDVR.zip
 #    rm SysDVR.zip
 #fi
+
+### 特斯拉官方初始菜单Ultrahand
+### Fetch lastest Ultrahand from https://github.com/ppkantorski/Ultrahand-Overlay/releases/latest
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ovlmenu.ovl"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ovlmenu.ovl
+if [ $? -ne 0 ]; then
+    echo "ovlmenu.ovl\033[31m failed\033[0m."
+else
+    echo "ovlmenu.ovl\033[32m success\033[0m."
+
+    mv ovlmenu.ovl ./switch/.overlays
+fi
+### 特斯拉官方初始菜单Ultrahand的汉化包
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo lang {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip[^"]*"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o lang.zip
+if [ $? -ne 0 ]; then
+    echo "lang.zip\033[31m failed\033[0m."
+else
+    echo "lang.zip\033[32m success\033[0m."
+    mkdir -p ./config/Ultrahand/lang
+    unzip -oq lang.zip
+    rm lang.zip
+    mv zh-cn.json ./config/Ultrahand/lang
+fi
 
 # -------------------------------------------
 cat >> ../description.txt << ENDOFFILE
