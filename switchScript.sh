@@ -745,6 +745,17 @@ else
     mkdir -p ./config/Ultrahand/lang
     unzip -oq lang.zip
     rm lang.zip
+    mv de.json ./config/Ultrahand/lang
+    mv en.json ./config/Ultrahand/lang
+    mv es.json ./config/Ultrahand/lang
+    mv fr.json ./config/Ultrahand/lang
+    mv it.json ./config/Ultrahand/lang
+    mv ja.json ./config/Ultrahand/lang
+    mv ko.json ./config/Ultrahand/lang
+    mv nl.json ./config/Ultrahand/lang
+    mv pt.json ./config/Ultrahand/lang
+    mv ru.json ./config/Ultrahand/lang
+    mv zh-tw.json ./config/Ultrahand/lang
     mv zh-cn.json ./config/Ultrahand/lang
 fi
 
