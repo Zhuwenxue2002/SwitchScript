@@ -553,7 +553,7 @@ else
     unzip -oq OC_Toolkit.zip
     rm OC_Toolkit.zip
     mkdir -p ./switch/.packages
-    mv "OC Switchcraft EOS" ./switch/.packages
+    mv "OC Toolkit" ./switch/.packages
 fi
 
 
