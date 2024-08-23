@@ -519,11 +519,11 @@ else
 fi
 
 ### 极限超频的kip
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo kip {} >> ../description.txt
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*kip.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o kip.zip
@@ -538,11 +538,11 @@ else
 fi
 
 ### 极限超频
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo {} >> ../description.txt
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*OC_Toolkit[^"]*.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o OC_Toolkit.zip
