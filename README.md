@@ -104,21 +104,23 @@
 - 2024-08-23：更新Ultrahand版本为官方版本，适配EOS1.4.0
 - 2024-09-11：修复OC.Toolkit
 - 2024-09-11：更换sys-clk为eos作者提供版本
+- 2024-09-11：更换Status-Monitor-Overlay为官方提供版本
 
 # Tesla
 
-huangqian8大佬使用的Tesla方案是zdm大佬的tesla方案终极版
+~~huangqian8大佬使用的Tesla方案是zdm大佬的tesla方案终极版~~
 
-好用是真的好用，但是我联系不上zdm大佬要他的github的发行链接
+~~好用是真的好用，但是我联系不上zdm大佬要他的github的发行链接~~
 
 所以只能在论坛上下载，然后手动push到github上，属于是手动更更新了
+
+部分插件更换为原版，最大保证兼容性，少部分插件仍然使用Z大编译后的，汉化插件仍然好用
 
 *当然，这个解决方法也是huangqian8大佬想出来的嘿嘿*
 
 [品技论坛（上不去得挂梯子）](https://www.tekqart.com/thread-222735-1-1.html?_dsign=c72d4895)
 
 - **QuickNTP**
-- **Status-Monitor-Overlay**
 - **ovl-sysmodules**
 - **ReverseNX-RT和FPSLocker**
 - **EdiZon-SE和EdiZon-Overlay**

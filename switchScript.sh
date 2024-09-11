@@ -637,14 +637,31 @@ else
     rm ovl-sysmodules.zip
 fi
 
-### Fetch StatusMonitor
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/StatusMonitor.zip -o StatusMonitor.zip
+#### 直接拉取原版StatusMonitor
+#### Fetch StatusMonitor
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/StatusMonitor.zip -o StatusMonitor.zip
+#if [ $? -ne 0 ]; then
+#    echo "StatusMonitor download\033[31m failed\033[0m."
+#else
+#    echo "StatusMonitor download\033[32m success\033[0m."
+#    unzip -oq StatusMonitor.zip
+#    rm StatusMonitor.zip
+#fi
+
+### Fetch StatusMonitor from https://github.com/masagrator/Status-Monitor-Overlay/releases/latest
+curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*Status-Monitor-Overlay.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o Status-Monitor-Overlay.zip
 if [ $? -ne 0 ]; then
-    echo "StatusMonitor download\033[31m failed\033[0m."
+    echo "Status-Monitor-Overlay download\033[31m failed\033[0m."
 else
-    echo "StatusMonitor download\033[32m success\033[0m."
-    unzip -oq StatusMonitor.zip
-    rm StatusMonitor.zip
+    echo "Status-Monitor-Overlay download\033[32m success\033[0m."
+    unzip -oq Status-Monitor-Overlay.zip
+    rm Status-Monitor-Overlay.zip
 fi
 
 # 直接从EOS作者的GitHub上拉取他提供的sys-clk
@@ -780,8 +797,6 @@ cat >> ../description.txt << ENDOFFILE
 nx-ovlloader
 EdiZon
 ovl-sysmodules
-StatusMonitor
-sys-clk
 ReverseNX-RT
 QuickNTP
 sys-patch-overlay
