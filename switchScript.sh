@@ -543,15 +543,15 @@ curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo {} >> ../description.txt
 curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC_Toolkit[^"]*.zip"' \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC.Toolkit[^"]*.zip"' \
   | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o OC_Toolkit.zip
+  | xargs -I {} curl -sL {} -o OC.Toolkit.zip
 if [ $? -ne 0 ]; then
-    echo "OC_Toolkit download\033[31m failed\033[0m."
+    echo "OC.Toolkit download\033[31m failed\033[0m."
 else
-    echo "OC_Toolkit download\033[32m success\033[0m."
-    unzip -oq OC_Toolkit.zip
-    rm OC_Toolkit.zip
+    echo "OC.Toolkit download\033[32m success\033[0m."
+    unzip -oq OC.Toolkit.zip
+    rm OC.Toolkit.zip
     mkdir -p ./switch/.packages
     mv "OC Toolkit" ./switch/.packages
 fi
