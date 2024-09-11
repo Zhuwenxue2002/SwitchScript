@@ -779,6 +779,7 @@ else
     unzip -oq lang.zip
     rm lang.zip
     mv de.json ./config/ultrahand/lang
+    mv pl.json ./config/ultrahand/lang
     mv en.json ./config/ultrahand/lang
     mv es.json ./config/ultrahand/lang
     mv fr.json ./config/ultrahand/lang
