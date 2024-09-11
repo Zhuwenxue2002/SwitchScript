@@ -519,7 +519,7 @@ else
 fi
 
 ### 极限超频的kip
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+### Fetch kip from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
 curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo kip {} >> ../description.txt
@@ -556,6 +556,21 @@ else
     mv "OC Toolkit" ./switch/.packages
 fi
 
+### Fetch sys-clk from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo sys-clk {} >> ../description.txt
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-clk.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o sys-clk.zip
+if [ $? -ne 0 ]; then
+    echo "sys-clk download\033[31m failed\033[0m."
+else
+    echo "sys-clk download\033[32m success\033[0m."
+    unzip -oq sys-clk.zip
+    rm sys-clk.zip
+fi
 
 #### Fetch Ultrahand
 #### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
@@ -632,15 +647,16 @@ else
     rm StatusMonitor.zip
 fi
 
-### Fetch sys-clk-oc
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
-if [ $? -ne 0 ]; then
-    echo "sys-clk-oc download\033[31m failed\033[0m."
-else
-    echo "sys-clk-oc download\033[32m success\033[0m."
-    unzip -oq sys-clk-oc.zip
-    rm sys-clk-oc.zip
-fi
+# 直接从EOS作者的GitHub上拉取他提供的sys-clk
+#### Fetch sys-clk-oc
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
+#if [ $? -ne 0 ]; then
+#    echo "sys-clk-oc download\033[31m failed\033[0m."
+#else
+#    echo "sys-clk-oc download\033[32m success\033[0m."
+#    unzip -oq sys-clk-oc.zip
+#    rm sys-clk-oc.zip
+#fi
 
 ### Fetch ReverseNX-RT
 curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ReverseNX-RT.zip -o ReverseNX-RT.zip
