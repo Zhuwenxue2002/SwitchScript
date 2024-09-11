@@ -43,12 +43,12 @@
     - [x] nro插件商店 `hb-appstore` [From Here](https://github.com/fortheusers/hb-appstore)
   - Tesla
     - [x] 加载器 `nx-ovlloader` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 初始菜单 `Ultrahand` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
+    - [x] 初始菜单 `Ultrahand` [From Here](https://github.com/ppkantorski/Ultrahand-Overlay)
   - Ovl插件
     - [x] 金手指工具 `EdiZon` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统模块 `ovl-sysmodules` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统监视 `StatusMonitor` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统超频  `sys-clk`[From Here](https://www.tekqart.com/thread-222735-1-1.html)
+    - [x] 系统监视 `StatusMonitor` [From Here](https://github.com/masagrator/Status-Monitor-Overlay)
+    - [x] 系统超频  `sys-clk`[From Here](https://github.com/halop/OC_Toolkit_SC_EOS)
     - [x] 掌机底座模式切换 `ReverseNX-RT` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 时间同步 `QuickNTP` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统补丁 `sys-patch` [From Here](https://gbatemp.net/threads/sigpatches-for-atmosphere-hekate-fss0-fusee-package3.571543/)
