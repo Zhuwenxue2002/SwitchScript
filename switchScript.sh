@@ -543,7 +543,7 @@ curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo {} >> ../description.txt
 curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC.Toolkit[^"]*.zip"' \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC.Toolkit.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o OC.Toolkit.zip
 if [ $? -ne 0 ]; then
