@@ -105,6 +105,8 @@
 - 2024-09-11：修复OC.Toolkit
 - 2024-09-11：更换sys-clk为eos作者提供版本
 - 2024-09-11：更换Status-Monitor-Overlay为官方提供版本
+- 2024-10-13：Lockpick_RCM插件被官方删库，更换为集成huangqian8大佬插件仓库最终保存版
+
 
 # Tesla
 
