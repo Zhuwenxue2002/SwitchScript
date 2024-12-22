@@ -474,6 +474,22 @@ else
     mv appstore.nro ./switch/appstore
 fi
 
+### Fetch lastest switch-nsp-forwarder from https://github.com/TooTallNate/switch-nsp-forwarder/releases/latest
+curl -sL https://api.github.com/repos/TooTallNate/switch-nsp-forwarder/releases/latest \
+  | jq '.tag_name' \
+  | xargs -I {} echo switch-nsp-forwarder {} >> ../description.txt
+curl -sL https://api.github.com/repos/TooTallNate/switch-nsp-forwarder/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*nsp-forwarder.nro"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o nsp-forwarder.nro
+if [ $? -ne 0 ]; then
+    echo "nsp-forwarder download\033[31m failed\033[0m."
+else
+    echo "nsp-forwarder download\033[32m success\033[0m."
+    mkdir -p ./switch/nsp-forwarder
+    mv nsp-forwarder.nro ./switch/nsp-forwarder
+fi
+
 ### Fetch lastest MissionControl from https://github.com/ndeadly/MissionControl/releases/latest
 curl -sL https://api.github.com/repos/ndeadly/MissionControl/releases/latest \
   | jq '.name' \

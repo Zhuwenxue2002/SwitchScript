@@ -41,6 +41,7 @@
     - [x] 手柄支持工具 `MissionControl`[From Here](https://github.com/ndeadly/MissionControl)
     - [x] 有线手柄支持工具 `sys-con` [From Here](https://github.com/o0Zz/sys-con)
     - [x] nro插件商店 `hb-appstore` [From Here](https://github.com/fortheusers/hb-appstore)
+    - [x] 前端制作插件 `switch-nsp-forwarder` [From Here](https://github.com/TooTallNate/switch-nsp-forwarder)
   - Tesla
     - [x] 加载器 `nx-ovlloader` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 初始菜单 `Ultrahand` [From Here](https://github.com/ppkantorski/Ultrahand-Overlay)
@@ -87,6 +88,7 @@
 - 增加插件MissionControl（蓝牙手柄连接）
 - 增加nro插件sys-con（usb手柄链接） *这个插件不是官方原版，而是一个新分支！！*、
 - 增加nro插件商店hb-appstore
+- 增加nro插件switch-nsp-forwarder
 
 ## 更新日志
 
@@ -106,6 +108,7 @@
 - 2024-09-11：更换sys-clk为eos作者提供版本
 - 2024-09-11：更换Status-Monitor-Overlay为官方提供版本
 - 2024-10-13：Lockpick_RCM插件被官方删库，更换为集成huangqian8大佬插件仓库最终保存版
+- 2024-12-22：新增nro插件nsp-forwarder
 
 
 # Tesla
