@@ -600,6 +600,25 @@ else
     rm sys-clk.zip
 fi
 
+
+### 更换sys-patch为官方版本
+### Fetch sys-patch from https://github.com/borntohonk/sys-patch/releases/latest
+curl -sL https://api.github.com/repos/borntohonk/sys-patch/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/borntohonk/sys-patch/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-patch.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o sys-patch.zip
+if [ $? -ne 0 ]; then
+    echo "sys-patch download\033[31m failed\033[0m."
+else
+    echo "sys-patch download\033[32m success\033[0m."
+    unzip -oq sys-patch.zip
+    rm sys-patch.zip
+fi
+
+
 #### Fetch Ultrahand
 #### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
 #curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
@@ -754,16 +773,16 @@ fi
 #    rm sys-tune.zip
 #fi
 
-### Fetch sys-patch
-### 更新版本为gba仓库版本呢，不用东方的包了
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-patch.zip -o sys-patch.zip
-if [ $? -ne 0 ]; then
-    echo "sys-patch download\033[31m failed\033[0m."
-else
-    echo "sys-patch download\033[32m success\033[0m."
-    unzip -oq sys-patch.zip
-    rm sys-patch.zip
-fi
+#### Fetch sys-patch
+#### 更新版本为gba仓库版本呢，不用东方的包了
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-patch.zip -o sys-patch.zip
+#if [ $? -ne 0 ]; then
+#    echo "sys-patch download\033[31m failed\033[0m."
+#else
+#    echo "sys-patch download\033[32m success\033[0m."
+#    unzip -oq sys-patch.zip
+#    rm sys-patch.zip
+#fi
 
 #### 新增sysDvr
 #curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/SysDVR.zip -o SysDVR.zip

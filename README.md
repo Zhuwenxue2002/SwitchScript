@@ -1,10 +1,10 @@
 # 大气层个人整合包生成脚本
 
-**_支持系统版本：18.1.0_**
+**_支持系统版本：19.1.0_**
 
-**_支持大气层版本：1.7.1_**
+**_支持大气层版本：1.8.1_**
 
-**_支持hekate版本：6.2.1_**
+**_支持hekate版本：6.2.2_**
 
 - 此项目脚本fork自[huangqian8/SwitchScript: 大气层个人整合包生成脚本 (github.com)](https://github.com/huangqian8/SwitchScript)，由xiaobai进行精简
 
@@ -52,7 +52,7 @@
     - [x] 系统超频  `sys-clk`[From Here](https://github.com/halop/OC_Toolkit_SC_EOS)
     - [x] 掌机底座模式切换 `ReverseNX-RT` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 时间同步 `QuickNTP` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统补丁 `sys-patch` [From Here](https://gbatemp.net/threads/sigpatches-for-atmosphere-hekate-fss0-fusee-package3.571543/)
+    - [x] 系统补丁 `sys-patch` [From Here](https://github.com/borntohonk/sys-patch)
 - 文件操作：
   - [x] 移动 `fusee.bin` 至 `bootloader/payloads` 文件夹
   - [x] 将 `hekate_ctcaer_*.bin` 重命名为 `payload.bin`
@@ -109,7 +109,7 @@
 - 2024-09-11：更换Status-Monitor-Overlay为官方提供版本
 - 2024-10-13：Lockpick_RCM插件被官方删库，更换为集成huangqian8大佬插件仓库最终保存版
 - 2024-12-22：新增nro插件nsp-forwarder
-
+- 2024-12-22：更换sys-patch为官方版本
 
 # Tesla
 
