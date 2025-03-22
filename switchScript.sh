@@ -126,26 +126,38 @@ fi
 #    rm sigpatches.zip
 #fi
 
-### Fetch latest Lockpick_RCM.bin from https://github.com/Decscots/Lockpick_RCM/releases/latest
-curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
-  | jq '.tag_name' \
-  | xargs -I {} echo Lockpick_RCM {} >> ../description.txt
-curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*Lockpick_RCM.bin"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o Lockpick_RCM.bin
+#### Fetch latest Lockpick_RCM.bin from https://github.com/Decscots/Lockpick_RCM/releases/latest
+#curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
+#  | jq '.tag_name' \
+#  | xargs -I {} echo Lockpick_RCM {} >> ../description.txt
+#curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
+#  | grep -oP '"browser_download_url": "\Khttps://[^"]*Lockpick_RCM.bin"' \
+#  | sed 's/"//g' \
+#  | xargs -I {} curl -sL {} -o Lockpick_RCM.bin
+#if [ $? -ne 0 ]; then
+#    echo "Lockpick_RCM download\033[31m failed\033[0m."
+#else
+#    echo "Lockpick_RCM download\033[32m success\033[0m."
+#    mv Lockpick_RCM.bin ./bootloader/payloads
+#fi
+
+### 原版被删库，更换拉取huanqian8大佬插件包
+### Fetch latest Lockpick_RCM.bin
+curl -sL https://raw.githubusercontent.com/huangqian8/SwitchPlugins/main/plugins/Lockpick_RCM.zip -o Lockpick_RCM.zip
 if [ $? -ne 0 ]; then
     echo "Lockpick_RCM download\033[31m failed\033[0m."
 else
     echo "Lockpick_RCM download\033[32m success\033[0m."
-    mv Lockpick_RCM.bin ./bootloader/payloads
+    echo Lockpick_RCM v1.9.12 >> ../description.txt
+    unzip -oq Lockpick_RCM.zip
+    rm Lockpick_RCM.zip
 fi
 
-### Fetch latest TegraExplorer.bin form https://github.com/zdm65477730/TegraExplorer/releases
-curl -sL https://api.github.com/repos/zdm65477730/TegraExplorer/releases/latest \
+### Fetch latest TegraExplorer.bin form https://github.com/suchmememanyskill/TegraExplorer/releases
+curl -sL https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/latest \
   | jq '.tag_name' \
   | xargs -I {} echo TegraExplorer {} >> ../description.txt
-curl -sL https://api.github.com/repos/zdm65477730/TegraExplorer/releases/latest \
+curl -sL https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*TegraExplorer.bin"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o TegraExplorer.bin
@@ -479,6 +491,22 @@ else
     mv appstore.nro ./switch/appstore
 fi
 
+### Fetch lastest switch-nsp-forwarder from https://github.com/TooTallNate/switch-nsp-forwarder/releases/latest
+curl -sL https://api.github.com/repos/TooTallNate/switch-nsp-forwarder/releases/latest \
+  | jq '.tag_name' \
+  | xargs -I {} echo switch-nsp-forwarder {} >> ../description.txt
+curl -sL https://api.github.com/repos/TooTallNate/switch-nsp-forwarder/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*nsp-forwarder.nro"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o nsp-forwarder.nro
+if [ $? -ne 0 ]; then
+    echo "nsp-forwarder download\033[31m failed\033[0m."
+else
+    echo "nsp-forwarder download\033[32m success\033[0m."
+    mkdir -p ./switch/nsp-forwarder
+    mv nsp-forwarder.nro ./switch/nsp-forwarder
+fi
+
 ### Fetch lastest MissionControl from https://github.com/ndeadly/MissionControl/releases/latest
 curl -sL https://api.github.com/repos/ndeadly/MissionControl/releases/latest \
   | jq '.name' \
@@ -498,7 +526,7 @@ fi
 ## Fetch lastest sys-con from https://github.com/o0Zz/sys-con/releases/latest
 curl -sL https://api.github.com/repos/o0Zz/sys-con/releases/latest \
   | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
+  | xargs -I {} echo sys-con {} >> ../description.txt
 curl -sL https://api.github.com/repos/o0Zz/sys-con/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-con[^"]*.zip"' \
   | sed 's/"//g' \
@@ -536,11 +564,11 @@ else
 fi
 
 ### 极限超频的kip
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+### Fetch kip from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo kip {} >> ../description.txt
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*kip.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o kip.zip
@@ -555,35 +583,80 @@ else
 fi
 
 ### 极限超频
-### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit/releases/latest
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
+### Fetch OC_Toolkit from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
   | jq '.name' \
   | xargs -I {} echo {} >> ../description.txt
-curl -sL https://api.github.com/repos/halop/OC_Toolkit/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC_Toolkit[^"]*.zip"' \
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*OC.Toolkit.zip"' \
   | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o OC_Toolkit.zip
+  | xargs -I {} curl -sL {} -o OC.Toolkit.zip
 if [ $? -ne 0 ]; then
-    echo "OC_Toolkit download\033[31m failed\033[0m."
+    echo "OC.Toolkit download\033[31m failed\033[0m."
 else
-    echo "OC_Toolkit download\033[32m success\033[0m."
-    unzip -oq OC_Toolkit.zip
-    rm OC_Toolkit.zip
+    echo "OC.Toolkit download\033[32m success\033[0m."
+    unzip -oq OC.Toolkit.zip
+    rm OC.Toolkit.zip
     mkdir -p ./switch/.packages
-    mv "OC Switchcraft EOS" ./switch/.packages
+    mv "OC Toolkit" ./switch/.packages
 fi
 
-
-### Fetch Ultrahand
-### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+### Fetch sys-clk from https://github.com/halop/OC_Toolkit_SC_EOS/releases/latest
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo sys-clk {} >> ../description.txt
+curl -sL https://api.github.com/repos/halop/OC_Toolkit_SC_EOS/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-clk.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o sys-clk.zip
 if [ $? -ne 0 ]; then
-    echo "Ultrahand download\033[31m failed\033[0m."
+    echo "sys-clk download\033[31m failed\033[0m."
 else
-    echo "Ultrahand download\033[32m success\033[0m."
-    unzip -oq Ultrahand.zip
-    rm Ultrahand.zip
+    echo "sys-clk download\033[32m success\033[0m."
+    unzip -oq sys-clk.zip
+    rm sys-clk.zip
 fi
+
+
+### 更换sys-patch为官方版本
+### Fetch sys-patch from https://github.com/borntohonk/sys-patch/releases/latest
+curl -sL https://api.github.com/repos/borntohonk/sys-patch/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/borntohonk/sys-patch/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*sys-patch.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o sys-patch.zip
+if [ $? -ne 0 ]; then
+    echo "sys-patch download\033[31m failed\033[0m."
+else
+    echo "sys-patch download\033[32m success\033[0m."
+    unzip -oq sys-patch.zip
+    rm sys-patch.zip
+fi
+
+
+#### Fetch Ultrahand
+#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+#if [ $? -ne 0 ]; then
+#    echo "Ultrahand download\033[31m failed\033[0m."
+#else
+#    echo "Ultrahand download\033[32m success\033[0m."
+#    unzip -oq Ultrahand.zip
+#    rm Ultrahand.zip
+#fi
+
+#### Fetch Ultrahand
+#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
+#if [ $? -ne 0 ]; then
+#    echo "Ultrahand download\033[31m failed\033[0m."
+#else
+#    echo "Ultrahand download\033[32m success\033[0m."
+#    unzip -oq Ultrahand.zip
+#    rm Ultrahand.zip
+#fi
 
 #### Fetch Tesla-Menu
 #### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
@@ -628,25 +701,43 @@ else
     rm ovl-sysmodules.zip
 fi
 
-### Fetch StatusMonitor
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/StatusMonitor.zip -o StatusMonitor.zip
+#### 直接拉取原版StatusMonitor
+#### Fetch StatusMonitor
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/StatusMonitor.zip -o StatusMonitor.zip
+#if [ $? -ne 0 ]; then
+#    echo "StatusMonitor download\033[31m failed\033[0m."
+#else
+#    echo "StatusMonitor download\033[32m success\033[0m."
+#    unzip -oq StatusMonitor.zip
+#    rm StatusMonitor.zip
+#fi
+
+### Fetch StatusMonitor from https://github.com/masagrator/Status-Monitor-Overlay/releases/latest
+curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*Status-Monitor-Overlay.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o Status-Monitor-Overlay.zip
 if [ $? -ne 0 ]; then
-    echo "StatusMonitor download\033[31m failed\033[0m."
+    echo "Status-Monitor-Overlay download\033[31m failed\033[0m."
 else
-    echo "StatusMonitor download\033[32m success\033[0m."
-    unzip -oq StatusMonitor.zip
-    rm StatusMonitor.zip
+    echo "Status-Monitor-Overlay download\033[32m success\033[0m."
+    unzip -oq Status-Monitor-Overlay.zip
+    rm Status-Monitor-Overlay.zip
 fi
 
-### Fetch sys-clk-oc
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
-if [ $? -ne 0 ]; then
-    echo "sys-clk-oc download\033[31m failed\033[0m."
-else
-    echo "sys-clk-oc download\033[32m success\033[0m."
-    unzip -oq sys-clk-oc.zip
-    rm sys-clk-oc.zip
-fi
+# 直接从EOS作者的GitHub上拉取他提供的sys-clk
+#### Fetch sys-clk-oc
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
+#if [ $? -ne 0 ]; then
+#    echo "sys-clk-oc download\033[31m failed\033[0m."
+#else
+#    echo "sys-clk-oc download\033[32m success\033[0m."
+#    unzip -oq sys-clk-oc.zip
+#    rm sys-clk-oc.zip
+#fi
 
 ### Fetch ReverseNX-RT
 curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ReverseNX-RT.zip -o ReverseNX-RT.zip
@@ -699,16 +790,16 @@ fi
 #    rm sys-tune.zip
 #fi
 
-### Fetch sys-patch
-### 更新版本为gba仓库版本呢，不用东方的包了
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-patch.zip -o sys-patch.zip
-if [ $? -ne 0 ]; then
-    echo "sys-patch download\033[31m failed\033[0m."
-else
-    echo "sys-patch download\033[32m success\033[0m."
-    unzip -oq sys-patch.zip
-    rm sys-patch.zip
-fi
+#### Fetch sys-patch
+#### 更新版本为gba仓库版本呢，不用东方的包了
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-patch.zip -o sys-patch.zip
+#if [ $? -ne 0 ]; then
+#    echo "sys-patch download\033[31m failed\033[0m."
+#else
+#    echo "sys-patch download\033[32m success\033[0m."
+#    unzip -oq sys-patch.zip
+#    rm sys-patch.zip
+#fi
 
 #### 新增sysDvr
 #curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/SysDVR.zip -o SysDVR.zip
@@ -720,14 +811,57 @@ fi
 #    rm SysDVR.zip
 #fi
 
+### 特斯拉官方初始菜单Ultrahand
+### Fetch lastest Ultrahand from https://github.com/ppkantorski/Ultrahand-Overlay/releases/latest
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ovlmenu.ovl"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ovlmenu.ovl
+if [ $? -ne 0 ]; then
+    echo "ovlmenu.ovl\033[31m failed\033[0m."
+else
+    echo "ovlmenu.ovl\033[32m success\033[0m."
+
+    mv ovlmenu.ovl ./switch/.overlays
+fi
+### 特斯拉官方初始菜单Ultrahand的汉化包
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo lang {} >> ../description.txt
+curl -sL https://api.github.com/repos/ppkantorski/Ultrahand-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*lang.zip[^"]*"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o lang.zip
+if [ $? -ne 0 ]; then
+    echo "lang.zip\033[31m failed\033[0m."
+else
+    echo "lang.zip\033[32m success\033[0m."
+    mkdir -p ./config/ultrahand/lang
+    unzip -oq lang.zip
+    rm lang.zip
+    mv de.json ./config/ultrahand/lang
+    mv pl.json ./config/ultrahand/lang
+    mv en.json ./config/ultrahand/lang
+    mv es.json ./config/ultrahand/lang
+    mv fr.json ./config/ultrahand/lang
+    mv it.json ./config/ultrahand/lang
+    mv ja.json ./config/ultrahand/lang
+    mv ko.json ./config/ultrahand/lang
+    mv nl.json ./config/ultrahand/lang
+    mv pt.json ./config/ultrahand/lang
+    mv ru.json ./config/ultrahand/lang
+    mv zh-tw.json ./config/ultrahand/lang
+    mv zh-cn.json ./config/ultrahand/lang
+fi
+
 # -------------------------------------------
 cat >> ../description.txt << ENDOFFILE
 nx-ovlloader
-Ultrahand
 EdiZon
 ovl-sysmodules
-StatusMonitor
-sys-clk
 ReverseNX-RT
 QuickNTP
 sys-patch-overlay

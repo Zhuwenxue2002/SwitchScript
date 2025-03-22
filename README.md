@@ -1,10 +1,10 @@
 # 大气层个人整合包生成脚本
 
-**_支持系统版本：18.1.0_**
+**_支持系统版本：19.1.0_**
 
-**_支持大气层版本：1.7.1_**
+**_支持大气层版本：1.8.1_**
 
-**_支持hekate版本：6.2.1_**
+**_支持hekate版本：6.2.2_**
 
 - 此项目脚本fork自[huangqian8/SwitchScript: 大气层个人整合包生成脚本 (github.com)](https://github.com/huangqian8/SwitchScript)，由xiaobai进行精简
 
@@ -41,17 +41,18 @@
     - [x] 手柄支持工具 `MissionControl`[From Here](https://github.com/ndeadly/MissionControl)
     - [x] 有线手柄支持工具 `sys-con` [From Here](https://github.com/o0Zz/sys-con)
     - [x] nro插件商店 `hb-appstore` [From Here](https://github.com/fortheusers/hb-appstore)
+    - [x] 前端制作插件 `switch-nsp-forwarder` [From Here](https://github.com/TooTallNate/switch-nsp-forwarder)
   - Tesla
     - [x] 加载器 `nx-ovlloader` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 初始菜单 `Tesla-Menu` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
+    - [x] 初始菜单 `Ultrahand` [From Here](https://github.com/ppkantorski/Ultrahand-Overlay)
   - Ovl插件
     - [x] 金手指工具 `EdiZon` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统模块 `ovl-sysmodules` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统监视 `StatusMonitor` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统超频  `sys-clk`[From Here](https://www.tekqart.com/thread-222735-1-1.html)
+    - [x] 系统监视 `StatusMonitor` [From Here](https://github.com/masagrator/Status-Monitor-Overlay)
+    - [x] 系统超频  `sys-clk`[From Here](https://github.com/halop/OC_Toolkit_SC_EOS)
     - [x] 掌机底座模式切换 `ReverseNX-RT` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 时间同步 `QuickNTP` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统补丁 `sys-patch` [From Here](https://gbatemp.net/threads/sigpatches-for-atmosphere-hekate-fss0-fusee-package3.571543/)
+    - [x] 系统补丁 `sys-patch` [From Here](https://github.com/borntohonk/sys-patch)
 - 文件操作：
   - [x] 移动 `fusee.bin` 至 `bootloader/payloads` 文件夹
   - [x] 将 `hekate_ctcaer_*.bin` 重命名为 `payload.bin`
@@ -87,6 +88,7 @@
 - 增加插件MissionControl（蓝牙手柄连接）
 - 增加nro插件sys-con（usb手柄链接） *这个插件不是官方原版，而是一个新分支！！*、
 - 增加nro插件商店hb-appstore
+- 增加nro插件switch-nsp-forwarder
 
 ## 更新日志
 
@@ -99,23 +101,33 @@
 - 2024-06-20：删除hekate_ipl.ini in /bootloader/文件中的 kip1patch=nosigchk字段，因为精简了sigpatches，不删除这个字段开机会报一个小错误
 - 2024-07-05：更新hekate版本号
 - 2024-07-10：替换tesla-menu，替换sys-clk，更新极限超频套件
+- 2024-07-20：zdm大佬的TegraExplorer插件删除发布，更改由原版地址拉取插件
+- 2024-08-23：更新极限超频套件版本为1.4.0，更换拉取地址
+- 2024-08-23：更新Ultrahand版本为官方版本，适配EOS1.4.0
+- 2024-09-11：修复OC.Toolkit
+- 2024-09-11：更换sys-clk为eos作者提供版本
+- 2024-09-11：更换Status-Monitor-Overlay为官方提供版本
+- 2024-10-13：Lockpick_RCM插件被官方删库，更换为集成huangqian8大佬插件仓库最终保存版
+- 2024-12-22：新增nro插件nsp-forwarder
+- 2024-12-22：更换sys-patch为官方版本
 - 2025-03-22：删除文件管理工具 `NX-Shell`
 - 2025-03-22：添加前端管理工具ezRemote
 
 # Tesla
 
-huangqian8大佬使用的Tesla方案是zdm大佬的tesla方案终极版
+~~huangqian8大佬使用的Tesla方案是zdm大佬的tesla方案终极版~~
 
-好用是真的好用，但是我联系不上zdm大佬要他的github的发行链接
+~~好用是真的好用，但是我联系不上zdm大佬要他的github的发行链接~~
 
 所以只能在论坛上下载，然后手动push到github上，属于是手动更更新了
+
+部分插件更换为原版，最大保证兼容性，少部分插件仍然使用Z大编译后的，汉化插件仍然好用
 
 *当然，这个解决方法也是huangqian8大佬想出来的嘿嘿*
 
 [品技论坛（上不去得挂梯子）](https://www.tekqart.com/thread-222735-1-1.html?_dsign=c72d4895)
 
 - **QuickNTP**
-- **Status-Monitor-Overlay**
 - **ovl-sysmodules**
 - **ReverseNX-RT和FPSLocker**
 - **EdiZon-SE和EdiZon-Overlay**
