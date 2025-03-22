@@ -430,20 +430,37 @@ fi
 #    rm -rf theme-patches
 #fi
 
-### Fetch lastest NX-Shell from https://github.com/joel16/NX-Shell/releases/latest
-curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
+### 删除NX-Shell插件
+#### Fetch lastest NX-Shell from https://github.com/joel16/NX-Shell/releases/latest
+#curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
+#  | jq '.tag_name' \
+#  | xargs -I {} echo NX-Shell {} >> ../description.txt
+#curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
+#  | grep -oP '"browser_download_url": "\Khttps://[^"]*NX-Shell.nro"' \
+#  | sed 's/"//g' \
+#  | xargs -I {} curl -sL {} -o NX-Shell.nro
+#if [ $? -ne 0 ]; then
+#    echo "NX-Shell download\033[31m failed\033[0m."
+#else
+#    echo "NX-Shell download\033[32m success\033[0m."
+#    mkdir -p ./switch/NX-Shell
+#    mv NX-Shell.nro ./switch/NX-Shell
+#fi
+
+### Fetch lastest ezRemote from https://github.com/cy33hc/switch-ezremote-client/releases/latest
+curl -sL https://api.github.com/repos/cy33hc/switch-ezremote-client/releases/latest \
   | jq '.tag_name' \
-  | xargs -I {} echo NX-Shell {} >> ../description.txt
-curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*NX-Shell.nro"' \
+  | xargs -I {} echo switch-ezremote-client {} >> ../description.txt
+curl -sL https://api.github.com/repos/cy33hc/switch-ezremote-client/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ezremote-client.nro"' \
   | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o NX-Shell.nro
+  | xargs -I {} curl -sL {} -o ezremote-client.nro
 if [ $? -ne 0 ]; then
-    echo "NX-Shell download\033[31m failed\033[0m."
+    echo "ezremote-client download\033[31m failed\033[0m."
 else
-    echo "NX-Shell download\033[32m success\033[0m."
-    mkdir -p ./switch/NX-Shell
-    mv NX-Shell.nro ./switch/NX-Shell
+    echo "ezremote-client download\033[32m success\033[0m."
+    mkdir -p ./switch/ezremote-client
+    mv ezremote-client.nro ./switch/ezremote-client
 fi
 
 ### Fetch lastest hb-appstore from https://github.com/fortheusers/hb-appstore/releases/latest

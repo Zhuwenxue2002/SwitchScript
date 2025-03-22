@@ -37,7 +37,7 @@
     - [x] Mod下载器 `SimpleModDownloader` [From Here](https://github.com/PoloNX/SimpleModDownloader/releases/latest)
     - [x] Mod管理器`SimpleModManager`[From Here](https://github.com/nadrino/SimpleModManager)
     - [x] 串流工具 `Moonlight` [From Here](https://github.com/XITRIX/Moonlight-Switch/releases/latest)
-    - [x] 文件管理工具 `NX-Shell`[From Here](https://github.com/joel16/NX-Shell)
+    - [x] 文件管理工具 `ezRemote`[From Here](https://github.com/cy33hc/switch-ezremote-client)
     - [x] 手柄支持工具 `MissionControl`[From Here](https://github.com/ndeadly/MissionControl)
     - [x] 有线手柄支持工具 `sys-con` [From Here](https://github.com/o0Zz/sys-con)
     - [x] nro插件商店 `hb-appstore` [From Here](https://github.com/fortheusers/hb-appstore)
@@ -82,7 +82,7 @@
 - 精简CommonProblemResolver插件（这个插件真的是坑惨我了！！！！）
 
 - 增加nro插件Mod管理器
-- 增加nro插件NX-Shell（可以不用连接电脑去删文件了！！！）
+- 增加nro插件ezRemote
 - 增加ovl插件sysDvr（又精简了，这玩意除了直播没啥用）
 - 增加插件MissionControl（蓝牙手柄连接）
 - 增加nro插件sys-con（usb手柄链接） *这个插件不是官方原版，而是一个新分支！！*、
@@ -99,7 +99,8 @@
 - 2024-06-20：删除hekate_ipl.ini in /bootloader/文件中的 kip1patch=nosigchk字段，因为精简了sigpatches，不删除这个字段开机会报一个小错误
 - 2024-07-05：更新hekate版本号
 - 2024-07-10：替换tesla-menu，替换sys-clk，更新极限超频套件
-
+- 2025-03-22：删除文件管理工具 `NX-Shell`
+- 2025-03-22：添加前端管理工具ezRemote
 
 # Tesla
 
