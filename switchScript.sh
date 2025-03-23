@@ -712,18 +712,29 @@ fi
 #    rm StatusMonitor.zip
 #fi
 
-### Fetch StatusMonitor from https://github.com/masagrator/Status-Monitor-Overlay/releases/latest
-curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
-  | jq '.name' \
-  | xargs -I {} echo {} >> ../description.txt
-curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*Status-Monitor-Overlay.zip"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o Status-Monitor-Overlay.zip
+#### Fetch StatusMonitor from https://github.com/masagrator/Status-Monitor-Overlay/releases/latest
+#curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+#  | jq '.name' \
+#  | xargs -I {} echo {} >> ../description.txt
+#curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
+#  | grep -oP '"browser_download_url": "\Khttps://[^"]*Status-Monitor-Overlay.zip"' \
+#  | sed 's/"//g' \
+#  | xargs -I {} curl -sL {} -o Status-Monitor-Overlay.zip
+#if [ $? -ne 0 ]; then
+#    echo "Status-Monitor-Overlay download\033[31m failed\033[0m."
+#else
+#    echo "Status-Monitor-Overlay download\033[32m success\033[0m."
+#    unzip -oq Status-Monitor-Overlay.zip
+#    rm Status-Monitor-Overlay.zip
+#fi
+
+### 拉取wei2ard大佬汉化过的状态监控（带电压版本）
+### Fetch StatusMonitor from https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip
+curl -sL https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip -o Status-Monitor-Overlay.zip
 if [ $? -ne 0 ]; then
     echo "Status-Monitor-Overlay download\033[31m failed\033[0m."
 else
-    echo "Status-Monitor-Overlay download\033[32m success\033[0m."
+    echo "Status-Monitor-Overlay. download\033[32m success\033[0m."
     unzip -oq Status-Monitor-Overlay.zip
     rm Status-Monitor-Overlay.zip
 fi

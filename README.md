@@ -48,7 +48,7 @@
   - Ovl插件
     - [x] 金手指工具 `EdiZon` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统模块 `ovl-sysmodules` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
-    - [x] 系统监视 `StatusMonitor` [From Here](https://github.com/masagrator/Status-Monitor-Overlay)
+    - [x] 系统监视 `StatusMonitor` [From Here](https://www.cnblogs.com/we1zard/articles/18462162)
     - [x] 系统超频  `sys-clk`[From Here](https://github.com/halop/OC_Toolkit_SC_EOS)
     - [x] 掌机底座模式切换 `ReverseNX-RT` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 时间同步 `QuickNTP` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
@@ -112,6 +112,7 @@
 - 2024-12-22：更换sys-patch为官方版本
 - 2025-03-22：删除文件管理工具 `NX-Shell`
 - 2025-03-22：添加前端管理工具ezRemote
+- 2025-03-23：更换为we1zard大佬的状态监控ovl插件
 
 # Tesla
 
