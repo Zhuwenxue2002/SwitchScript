@@ -221,12 +221,21 @@ sunshine的安装也都是一键式安装，优化也越来越好了
 
 psp中不乏有很多好游戏，例如：战神、啪嗒砰、乐克乐克、还有switch没有复刻的空之轨迹三部曲
 
-[ppspp ns版本1.5.4Nintendo Switch 综合讨论区 - Powered by Discuz! (tekqart.com)](https://www.tekqart.com/forum.php?mod=viewthread&tid=359053&highlight=ppspp&_dsign=ce3fd0b2)
+~~[ppspp ns版本1.5.4Nintendo Switch 综合讨论区 - Powered by Discuz! (tekqart.com)](https://www.tekqart.com/forum.php?mod=viewthread&tid=359053&highlight=ppspp&_dsign=ce3fd0b2)~~
 
-这个大佬给提供了1.15.4版本，应该是玩家接受更新版本的ppsspp模拟器
+~~这个大佬给提供了1.15.4版本，应该是玩家接受更新版本的ppsspp模拟器~~
+
+m4xw大佬移至了最新的ppsspp1.17.x版本到switch
+
+适用于 Switch 的 PPSSPP（自制程序）
+通过 m4xw 移植到 Nintendo Switch！请参阅 m4xw 的 Patreon。
+https://www.ppsspp.org/legacybuilds/
+下载 PPSSPP 1.17.x Switch（2024 年 9 月 9 日 - 新！
 
 实测普通超频拉满的情况下，战神开三倍大部分场景也可以满帧运行
 
 这已经是一个及格的答卷了，也推荐大家去尝试一下
+
+
 
 # 关于网络和2123-0011
