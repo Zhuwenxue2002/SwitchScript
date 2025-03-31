@@ -680,6 +680,81 @@ fi
 #sys-patch-overlay
 #ENDOFFILE
 
+# 这里为ultrahand菜单项写中文name
+### Write overlays.ini in /config/ultrahand
+cat > ./config/ultrahand/overlays.ini << ENDOFFILE
+[sys-patch-overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统补丁
+custom_version=
+
+[sys-clk-overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统超频
+custom_version=
+
+[FPSLocker.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=FPS补丁
+custom_version=
+
+[EdiZon.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=金手指
+custom_version=
+
+[ovl-sysmodules.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统模块
+custom_version=
+
+[QuickNTP.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=时间校准
+custom_version=
+
+[Status-Monitor-Overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=状态监视
+custom_version=
+
+[ReverseNX-RT.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=底座模式
+custom_version=
+ENDOFFILE
 
 ### Fetch EdiZon
 curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/EdiZon.zip -o EdiZon.zip
