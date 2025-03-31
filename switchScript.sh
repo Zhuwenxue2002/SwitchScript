@@ -682,6 +682,7 @@ fi
 
 # 这里为ultrahand菜单项写中文name
 ### Write overlays.ini in /config/ultrahand
+mkdir -p ./config/ultrahand/
 cat > ./config/ultrahand/overlays.ini << ENDOFFILE
 [sys-patch-overlay.ovl]
 priority=20
