@@ -635,6 +635,23 @@ else
     rm sys-patch.zip
 fi
 
+### 更换ldn_mitm为DefenderOfHyrule接手开发版本
+### Fetch sys-patch from https://github.com/DefenderOfHyrule/ldn_mitm/releases/latest
+curl -sL https://api.github.com/repos/DefenderOfHyrule/ldn_mitm/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo ldn_mitm {} >> ../description.txt
+curl -sL https://api.github.com/repos/DefenderOfHyrule/ldn_mitm/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ldn_mitm.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ldn_mitm.zip
+if [ $? -ne 0 ]; then
+    echo "ldn_mitm download\033[31m failed\033[0m."
+else
+    echo "ldn_mitm download\033[32m success\033[0m."
+    unzip -oq ldn_mitm.zip
+    rm ldn_mitm.zip
+fi
+
 
 #### Fetch Ultrahand
 #### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
@@ -754,6 +771,24 @@ hide=false
 use_launch_args=false
 launch_args=
 custom_name=底座模式
+custom_version=
+
+[MasterVolume.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=音量调节
+custom_version=
+
+[ldnmitm_config.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=联机补丁
 custom_version=
 ENDOFFILE
 
@@ -888,15 +923,22 @@ fi
 #    rm sys-patch.zip
 #fi
 
-#### 新增sysDvr
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/SysDVR.zip -o SysDVR.zip
-#if [ $? -ne 0 ]; then
-#    echo "SysDVR download\033[31m failed\033[0m."
-#else
-#    echo "SysDVR download\033[32m success\033[0m."
-#    unzip -oq SysDVR.zip
-#    rm SysDVR.zip
-#fi
+### MasterVolume音量调节插件
+### Fetch lastest MasterVolume from https://github.com/averne/MasterVolume/releases/latest
+curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
+  | jq '.tag_name' \
+  | xargs -I {} echo MasterVolume {} >> ../description.txt
+curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*MasterVolume.ovl"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o MasterVolume.ovl
+if [ $? -ne 0 ]; then
+    echo "MasterVolume.ovl\033[31m failed\033[0m."
+else
+    echo "MasterVolume.ovl\033[32m success\033[0m."
+
+    mv MasterVolume.ovl ./switch/.overlays
+fi
 
 ### 特斯拉官方初始菜单Ultrahand
 ### Fetch lastest Ultrahand from https://github.com/ppkantorski/Ultrahand-Overlay/releases/latest

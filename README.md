@@ -74,6 +74,8 @@
     - [x] 掌机底座模式切换 `ReverseNX-RT` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 时间同步 `QuickNTP` [From Here](https://www.tekqart.com/thread-222735-1-1.html)
     - [x] 系统补丁 `sys-patch` [From Here](https://github.com/borntohonk/sys-patch)
+    - [x] 联机补丁 `ldn_mitm` [From Here](https://github.com/DefenderOfHyrule/ldn_mitm)
+    - [x] 音量调节 `MasterVolume` [From Here](https://github.com/averne/MasterVolume)
 - 文件操作：
   - [x] 移动 `fusee.bin` 至 `bootloader/payloads` 文件夹
   - [x] 将 `hekate_ctcaer_*.bin` 重命名为 `payload.bin`
@@ -135,6 +137,8 @@
 - 2025-03-22：添加前端管理工具ezRemote
 - 2025-03-23：更换为we1zard大佬的状态监控ovl插件
 - 2025-03-31：为ultrahand菜单项写中文name
+- 2025-04-03：更换ldn_mitm为DefenderOfHyrule接手开发版本
+- 2025-04-03：新增插件averne作者的MasterVolume插件，以完成电视端音量调节
 
 # Tesla
 
