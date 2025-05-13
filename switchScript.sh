@@ -935,7 +935,7 @@ curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
   | jq '.tag_name' \
   | xargs -I {} echo MasterVolume {} >> ../description.txt
 curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*MasterVolume.ovl"' \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*MasterVolume.ovl[^"]*"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o MasterVolume.ovl
 if [ $? -ne 0 ]; then
