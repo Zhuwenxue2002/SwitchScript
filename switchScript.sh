@@ -142,14 +142,20 @@ fi
 #fi
 
 ### 原版被删库，更换拉取huanqian8大佬插件包
-### Fetch latest Lockpick_RCM.bin
-curl -sL https://raw.githubusercontent.com/huangqian8/SwitchPlugins/main/plugins/Lockpick_RCM.zip -o Lockpick_RCM.zip
+### Fetch latest Lockpick_RCM.bin https://github.com/impeeza/Lockpick_RCMDecScots/releases/latest
+curl -sL https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest \
+  | jq '.tag_name' \
+  | xargs -I {} echo Lockpick_RCM.bin {} >> ../description.txt
+curl -sL https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*Lockpick_RCM[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o Lockpick_RCM.zip
 if [ $? -ne 0 ]; then
     echo "Lockpick_RCM download\033[31m failed\033[0m."
 else
     echo "Lockpick_RCM download\033[32m success\033[0m."
-    echo Lockpick_RCM v1.9.12 >> ../description.txt
     unzip -oq Lockpick_RCM.zip
+    mv Lockpick_RCM.bin ./bootloader/payloads
     rm Lockpick_RCM.zip
 fi
 
