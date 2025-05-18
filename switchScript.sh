@@ -664,7 +664,7 @@ curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
   | xargs -I {} echo  {} >> ../description.txt
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP.zip"' \
+  | grep -oP '"browser_download_url": "\Khttps://QuickNTP.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o QuickNTP.zip
 if [ $? -ne 0 ]; then
