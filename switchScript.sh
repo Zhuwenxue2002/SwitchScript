@@ -641,7 +641,7 @@ else
     rm Status-Monitor-Overlay.zip
 fi
 
-
+### z大底座模式插件
 ## Fetch lastest ReverseNX-RT from https://github.com/zdm65477730/ReverseNX-RT/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/ReverseNX-RT/releases/latest \
   | jq '.name' \
@@ -658,7 +658,7 @@ else
     rm ReverseNX-RT.zip
 fi
 
-### z大底座模式插件
+### z大时间校准插件
 ## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
@@ -676,7 +676,7 @@ else
 fi
 
 
-### z大时间校准插件
+### z大色彩校准插件
 ## Fetch lastest Fizeau from https://github.com/zdm65477730/Fizeau/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/Fizeau/releases/latest \
   | jq '.name' \
