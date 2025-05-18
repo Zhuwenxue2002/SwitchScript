@@ -670,9 +670,32 @@ if [ $? -ne 0 ]; then
     echo "QuickNTP download\033[31m failed\033[0m."
 else
     echo "QuickNTP download\033[32m success\033[0m."
+    # --- 添加文件类型检查 ---
+    # 使用 file 命令检查文件类型，并用 grep -q 静默检查输出是否包含 "Zip archive"
+    if ! file QuickNTP.zip | grep -q "Zip archive"; then
+        echo -e "\033[31m错误：下载的文件 QuickNTP.zip 不是一个有效的 zip 归档文件。\033[0m"
+        echo "文件信息："
+        ls -l QuickNTP.zip # 显示文件大小和权限
+        file QuickNTP.zip # 显示文件类型
+        echo "文件内容前几行 (可能显示错误信息):"
+        head QuickNTP.zip # 显示文件内容的前几行
+        rm QuickNTP.zip # 清理下载的无效文件
+        exit 1 # 退出脚本，表示下载内容有问题
+    fi
+    # --- 文件类型检查结束 ---
+
+    # 如果文件类型检查通过，再尝试解压
     unzip -oq QuickNTP.zip
-    rm QuickNTP.zip
+    # 检查解压是否成功 (可选，但推荐)
+    if [ $? -ne 0 ]; then
+        echo -e "解压\033[31m 失败\033[0m."
+        # rm QuickNTP.zip # 原脚本在解压后无论成功失败都删除，保持一致
+    else
+        echo -e "解压\033[32m 成功\033[0m."
+    fi
+    rm QuickNTP.zip # 清理下载的 zip 文件
 fi
+
 
 
 ### z大色彩校准插件
