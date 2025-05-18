@@ -659,42 +659,66 @@ else
 fi
 
 ### z大时间校准插件
-## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
   | xargs -I {} echo  {} >> ../description.txt
-curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-  | jq -r '.assets[] | select(.name == "QuickNTP.zip") | .browser_download_url' \
-  | xargs -I {} curl -sL {} -o QuickNTP.zip
-if [ $? -ne 0 ]; then
-    echo "QuickNTP download\033[31m failed\033[0m."
-else
-    echo "QuickNTP download\033[32m success\033[0m."
-    # --- 添加文件类型检查 ---
-    # 使用 file 命令检查文件类型，并用 grep -q 静默检查输出是否包含 "Zip archive"
-    if ! file QuickNTP.zip | grep -q "Zip archive"; then
-        echo -e "\033[31m错误：下载的文件 QuickNTP.zip 不是一个有效的 zip 归档文件。\033[0m"
-        echo "文件信息："
-        ls -l QuickNTP.zip # 显示文件大小和权限
-        file QuickNTP.zip # 显示文件类型
-        echo "文件内容前几行 (可能显示错误信息):"
-        head QuickNTP.zip # 显示文件内容的前几行
-        rm QuickNTP.zip # 清理下载的无效文件
-        exit 1 # 退出脚本，表示下载内容有问题
-    fi
-    # --- 文件类型检查结束 ---
 
-    # 如果文件类型检查通过，再尝试解压
-    unzip -oq QuickNTP.zip
-    # 检查解压是否成功 (可选，但推荐)
-    if [ $? -ne 0 ]; then
-        echo -e "解压\033[31m 失败\033[0m."
-        # rm QuickNTP.zip # 原脚本在解压后无论成功失败都删除，保持一致
-    else
-        echo -e "解压\033[32m 成功\033[0m."
-    fi
-    rm QuickNTP.zip # 清理下载的 zip 文件
+# 获取下载链接
+DOWNLOAD_URL=$(curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest | jq -r '.assets[] | select(.name == "QuickNTP.zip") | .browser_download_url')
+
+# 检查是否成功获取下载链接 (保留这个检查，虽然这次错误不是这里)
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo -e "\033[31m错误：无法获取 QuickNTP.zip 的下载链接。\033[0m"
+    exit 1
 fi
+
+# 下载 zip 文件
+# 移除 -s 参数，让 curl 打印详细信息，方便调试
+# 增加 || exit 1 确保下载失败时脚本退出
+curl -L "$DOWNLOAD_URL" -o QuickNTP.zip || { echo -e "QuickNTP 下载\033[31m 失败\033[0m."; exit 1; }
+
+# --- 添加文件存在性检查 ---
+echo "Checking if QuickNTP.zip exists after curl..."
+if [ ! -f QuickNTP.zip ]; then
+    echo -e "\033[31m错误：curl 命令返回成功，但文件 QuickNTP.zip 不存在！\033[0m"
+    echo "当前目录是: $(pwd)"
+    # 尝试列出当前目录所有文件，看是否有其他名字的文件
+    echo "当前目录文件列表:"
+    ls -la
+    exit 1 # 文件不存在，直接退出
+fi
+echo "QuickNTP.zip exists."
+# --- 文件存在性检查结束 ---
+
+# 如果文件存在，再打印下载成功信息并继续
+echo "QuickNTP download\033[32m success\033[0m."
+
+# --- 添加文件类型检查 (保留，虽然这次错误不是这里) ---
+if ! file QuickNTP.zip | grep -q "Zip archive"; then
+    echo -e "\033[31m错误：下载的文件 QuickNTP.zip 不是一个有效的 zip 归档文件。\033[0m"
+    echo "文件信息："
+    ls -l QuickNTP.zip # 显示文件大小和权限
+    file QuickNTP.zip # 显示文件类型
+    echo "文件内容前几行 (可能显示错误信息):"
+    head QuickNTP.zip # 显示文件内容的前几行
+    rm QuickNTP.zip # 清理下载的无效文件
+    exit 1 # 退出脚本，表示下载内容有问题
+fi
+# --- 文件类型检查结束 ---
+
+# 如果文件类型检查通过，再尝试解压
+echo "Attempting to unzip QuickNTP.zip..."
+unzip -oq QuickNTP.zip
+# 检查解压是否成功 (可选，但推荐)
+if [ $? -ne 0 ]; then
+    echo -e "解压\033[31m 失败\033[0m."
+    # rm QuickNTP.zip # 原脚本在解压后无论成功失败都删除，保持一致
+else
+    echo -e "解压\033[32m 成功\033[0m."
+fi
+rm QuickNTP.zip # 清理下载的 zip 文件
+
+
 
 
 
