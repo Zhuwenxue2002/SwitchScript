@@ -390,16 +390,6 @@ else
     rm nx-ovlloader.zip
 fi
 
-#### Fetch nx-ovlloader
-#### Tesla加载器，目前只能用仓库方案，没联系上zdm大佬
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/nx-ovlloader.zip -o nx-ovlloader.zip
-#if [ $? -ne 0 ]; then
-#    echo "nx-ovlloader download\033[31m failed\033[0m."
-#else
-#    echo "nx-ovlloader download\033[32m success\033[0m."
-#    unzip -oq nx-ovlloader.zip
-#    rm nx-ovlloader.zip
-#fi
 
 ### Write config.ini in /config/tesla
 cat > ./config/tesla/config.ini << ENDOFFILE
@@ -595,6 +585,15 @@ use_launch_args=false
 launch_args=
 custom_name=联机补丁
 custom_version=
+
+[Fizeau.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=色彩调节
+custom_version=
 ENDOFFILE
 
 ### z大金手指插件
@@ -614,16 +613,6 @@ else
     rm EdiZon.zip
 fi
 
-#### Fetch EdiZon
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/EdiZon.zip -o EdiZon.zip
-#if [ $? -ne 0 ]; then
-#    echo "EdiZon download\033[31m failed\033[0m."
-#else
-#    echo "EdiZon download\033[32m success\033[0m."
-#    unzip -oq EdiZon.zip
-#    rm EdiZon.zip
-#fi
-
 ### z大系统模块插件
 ## Fetch lastest ovl-sysmodules from https://github.com/zdm65477730/ovl-sysmodules/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/ovl-sysmodules/releases/latest \
@@ -640,17 +629,6 @@ else
     unzip -oq ovl-sysmodules.zip
     rm ovl-sysmodules.zip
 fi
-
-
-#### Fetch ovl-sysmodules
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ovl-sysmodules.zip -o ovl-sysmodules.zip
-#if [ $? -ne 0 ]; then
-#    echo "ovl-sysmodules download\033[31m failed\033[0m."
-#else
-#    echo "ovl-sysmodules download\033[32m success\033[0m."
-#    unzip -oq ovl-sysmodules.zip
-#    rm ovl-sysmodules.zip
-#fi
 
 ### 拉取wei2ard大佬汉化过的状态监控（带电压版本）
 ### Fetch StatusMonitor from https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip
@@ -680,18 +658,6 @@ else
     rm ReverseNX-RT.zip
 fi
 
-
-#### Fetch ReverseNX-RT
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ReverseNX-RT.zip -o ReverseNX-RT.zip
-#if [ $? -ne 0 ]; then
-#    echo "ReverseNX-RT download\033[31m failed\033[0m."
-#else
-#    echo "ReverseNX-RT download\033[32m success\033[0m."
-#    unzip -oq ReverseNX-RT.zip
-#    rm ReverseNX-RT.zip
-#fi
-
-
 ### z大底座模式插件
 ## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
@@ -709,15 +675,6 @@ else
     rm QuickNTP.zip
 fi
 
-#### Fetch QuickNTP
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/QuickNTP.zip -o QuickNTP.zip
-#if [ $? -ne 0 ]; then
-#    echo "QuickNTP download\033[31m failed\033[0m."
-#else
-#    echo "QuickNTP download\033[32m success\033[0m."
-#    unzip -oq QuickNTP.zip
-#    rm QuickNTP.zip
-#fi
 
 ### z大时间校准插件
 ## Fetch lastest Fizeau from https://github.com/zdm65477730/Fizeau/releases/latest

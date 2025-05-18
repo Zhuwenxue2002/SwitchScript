@@ -139,7 +139,7 @@
 - 2025-03-31：为ultrahand菜单项写中文name
 - 2025-04-03：更换ldn_mitm为DefenderOfHyrule接手开发版本
 - 2025-04-03：新增插件averne作者的MasterVolume插件，以完成电视端音量调节
-- 2025-05-18：将sh脚本重构，zdm大佬在今天将插件推送到github发行了喜大普奔
+- 2025-05-18：将sh脚本重构，zdm大佬在今天将插件推送到github发行了**喜大普奔**
 
 # Tesla
 
@@ -160,7 +160,6 @@
 - **ReverseNX-RT和FPSLocker**
 - **EdiZon-SE和EdiZon-Overlay**
 - **sys-clk**
-- **sys-patch** 
 
 # sigpatch + sys patch
 
@@ -181,13 +180,9 @@ A大曾经讲过从1.7.0开始，sigpatch签名补丁的三种解决方案
 
 我明白很多萌新玩家对于超频这个词汇感到陌生和恐慌，但其实稍微了解就明白其中原理了
 
-~~这个up讲的就很清楚~~
-
-~~https://www.bilibili.com/video/BV1V7421Z71A/?spm_id_from=333.337.search-card.all.click~~
-
-不知道什么原因，这个UP把我t出群里了，但他的文章也只是翻译和搬运国外大佬的研究，所以，I don't care
-
 https://rentry.co/ocsc 这个网站则是国外大佬出版的超频教程，随便用浏览器的翻译插件都可以明白其大致意思
+
+WE1ZARD大佬也发过很多相关的教程
 
 在这里我做一个总结：
 
