@@ -577,7 +577,7 @@ launch_args=
 custom_name=音量调节
 custom_version=
 
-[ldnmitm_config.ovl]
+[ldn_mitm.ovl]
 priority=20
 star=false
 hide=false
