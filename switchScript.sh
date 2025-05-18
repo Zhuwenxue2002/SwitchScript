@@ -664,8 +664,7 @@ curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
   | xargs -I {} echo  {} >> ../description.txt
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://QuickNTP.zip"' \
-  | sed 's/"//g' \
+  | jq -r '.assets[] | select(.name == "QuickNTP.zip") | .browser_download_url' \
   | xargs -I {} curl -sL {} -o QuickNTP.zip
 if [ $? -ne 0 ]; then
     echo "QuickNTP download\033[31m failed\033[0m."
@@ -674,6 +673,7 @@ else
     unzip -oq QuickNTP.zip
     rm QuickNTP.zip
 fi
+
 
 ### z大色彩校准插件
 ## Fetch lastest Fizeau from https://github.com/zdm65477730/Fizeau/releases/latest
