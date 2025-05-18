@@ -658,84 +658,22 @@ else
     rm ReverseNX-RT.zip
 fi
 
-#### z大时间校准插件
-### Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
-#curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-#  | jq '.name' \
-#  | xargs -I {} echo  {} >> ../description.txt
-#curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o QuickNTP.zip
-#if [ $? -ne 0 ]; then
-#    echo "QuickNTP download\033[31m failed\033[0m."
-#else
-#    echo "QuickNTP download\033[32m success\033[0m."
-#    unzip -oq QuickNTP.zip
-#    rm QuickNTP.zip
-#fi
-
 ### z大时间校准插件
 ## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
-
-# 增加 set -e，任何命令失败立即退出
-set -e
-
-echo "Starting QuickNTP download and extraction..."
-
-# 获取版本名并写入 description.txt
-# 注意：这里是追加 >>，如果想覆盖请用 >
-# 确保 ../description.txt 路径正确
-echo "Fetching latest release name..."
-RELEASE_NAME=$(curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest | jq -r '.name') # 使用 -r 移除引号
-if [ -z "$RELEASE_NAME" ]; then
-    echo "Error: Could not fetch release name."
-    exit 1
+curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o QuickNTP.zip
+if [ $? -ne 0 ]; then
+    echo "QuickNTP download\033[31m failed\033[0m."
+else
+    echo "QuickNTP download\033[32m success\033[0m."
+    unzip -oq QuickNTP.zip
+    rm QuickNTP.zip
 fi
-echo "$RELEASE_NAME" >> ../description.txt
-echo "Release name '$RELEASE_NAME' written to ../description.txt"
-
-# 获取下载链接
-echo "Fetching download URL..."
-DOWNLOAD_URL=$(curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
-  | sed 's/"//g')
-
-if [ -z "$DOWNLOAD_URL" ]; then
-    echo "Error: Could not find download URL for QuickNTP zip."
-    exit 1
-fi
-echo "Found download URL: $DOWNLOAD_URL"
-
-# 下载 zip 文件
-echo "Downloading QuickNTP.zip from $DOWNLOAD_URL..."
-# 移除 -s 参数，让 curl 打印详细信息
-# 增加 || exit 1 确保下载失败时脚本退出
-curl -L "$DOWNLOAD_URL" -o QuickNTP.zip || { echo "QuickNTP download \033[31m failed\033[0m."; exit 1; }
-
-# 如果 curl 返回 0，执行到这里
-echo "QuickNTP download \033[32m success\033[0m."
-
-# --- 添加调试信息 ---
-echo "Current directory is: $(pwd)"
-echo "Checking downloaded file QuickNTP.zip:"
-ls -l QuickNTP.zip
-file QuickNTP.zip
-# 如果文件很小，可能是错误页面，可以尝试打印前几行看看
-# head QuickNTP.zip
-# --- 调试信息结束 ---
-
-# 解压 zip 文件
-echo "Attempting to unzip QuickNTP.zip..."
-# 增加 || exit 1 确保解压失败时脚本退出
-unzip -oq QuickNTP.zip || { echo "Unzip \033[31m failed\033[0m."; exit 1; }
-
-echo "Unzip \033[32m success\033[0m."
-
-# 清理 zip 文件
-echo "Removing QuickNTP.zip..."
-rm QuickNTP.zip
-echo "Cleanup complete."
 
 ### z大色彩校准插件
 ## Fetch lastest Fizeau from https://github.com/zdm65477730/Fizeau/releases/latest
