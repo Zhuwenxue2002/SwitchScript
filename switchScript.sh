@@ -67,35 +67,6 @@ else
     rm hekate.zip
 fi
 
-
-
-#### Fetch latest Hekate + Nyx from https://github.com/CTCaer/hekate/releases/latest
-#curl -sL https://api.github.com/repos/CTCaer/hekate/releases/latest \
-#  | jq '.name' \
-#  | xargs -I {} echo {} >> ../description.txt
-#curl -sL https://api.github.com/repos/CTCaer/hekate/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*hekate_ctcaer[^"]*.zip"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o hekate.zip
-#if [ $? -ne 0 ]; then
-#    echo "Hekate + Nyx download\033[31m failed\033[0m."
-#else
-#    echo "Hekate + Nyx download\033[32m success\033[0m."
-#    unzip -oq hekate.zip
-#    rm hekate.zip
-#fi
-#
-#### Fetch Nyx CHS
-#curl -sL https://raw.githubusercontent.com/huangqian8/SwitchPlugins/main/lang/nyx.zip -o nyx.zip
-#if [ $? -ne 0 ]; then
-#    echo "Nyx CHS download\033[31m failed\033[0m."
-#else
-#    echo "Nyx CHS download\033[32m success\033[0m."
-#    mv ./bootloader/sys/nyx.bin ./bootloader/sys/nys-en.bin
-#    unzip -oq nyx.zip
-#    rm nyx.zip
-#fi
-
 ### Fetch logo
 curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/theme/logo.zip -o logo.zip
 if [ $? -ne 0 ]; then
@@ -106,42 +77,7 @@ else
     rm logo.zip
 fi
 
-#### Fetch latest SigPatches.zip
-#curl -sL https://sigmapatches.su/sigpatches.zip?03.29.2024 -o sigpatches.zip
-#if [ $? -ne 0 ]; then
-#    echo "SigPatches download\033[31m failed\033[0m."
-#else
-#    echo "SigPatches download\033[32m success\033[0m."
-#    unzip -oq sigpatches.zip
-#    rm sigpatches.zip
-#fi
-
-#### Fetch SigPatches.zip 此版本为gba论坛版本，更新支持18.1.0
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sigpatches.zip -o sigpatches.zip
-#if [ $? -ne 0 ]; then
-#    echo "sigpatches download\033[31m failed\033[0m."
-#else
-#    echo "sigpatches download\033[32m success\033[0m."
-#    unzip -oq sigpatches.zip
-#    rm sigpatches.zip
-#fi
-
-#### Fetch latest Lockpick_RCM.bin from https://github.com/Decscots/Lockpick_RCM/releases/latest
-#curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo Lockpick_RCM {} >> ../description.txt
-#curl -sL https://api.github.com/repos/Decscots/Lockpick_RCM/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*Lockpick_RCM.bin"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o Lockpick_RCM.bin
-#if [ $? -ne 0 ]; then
-#    echo "Lockpick_RCM download\033[31m failed\033[0m."
-#else
-#    echo "Lockpick_RCM download\033[32m success\033[0m."
-#    mv Lockpick_RCM.bin ./bootloader/payloads
-#fi
-
-### 原版被删库，更换拉取huanqian8大佬插件包
+### 更换impeeza维护的Lockpick_RCM
 ### Fetch latest Lockpick_RCM.bin https://github.com/impeeza/Lockpick_RCMDecScots/releases/latest
 curl -sL https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest \
   | jq '.tag_name' \
@@ -174,21 +110,6 @@ else
     mv TegraExplorer.bin ./bootloader/payloads
 fi
 
-#### Fetch latest CommonProblemResolver.bin form https://github.com/zdm65477730/CommonProblemResolver/releases
-#curl -sL https://api.github.com/repos/zdm65477730/CommonProblemResolver/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo CommonProblemResolver {} >> ../description.txt
-#curl -sL https://api.github.com/repos/zdm65477730/CommonProblemResolver/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*CommonProblemResolver.bin"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o CommonProblemResolver.bin
-#if [ $? -ne 0 ]; then
-#    echo "CommonProblemResolver download\033[31m failed\033[0m."
-#else
-#    echo "CommonProblemResolver download\033[32m success\033[0m."
-#    mv CommonProblemResolver.bin ./bootloader/payloads
-#fi
-
 ### 更换原版90DNS拉取地址
 curl -sL https://api.github.com/repos/meganukebmp/Switch_90DNS_tester/releases/latest \
   | jq '.tag_name' \
@@ -205,15 +126,6 @@ else
     mv Switch_90DNS_tester.nro ./switch/Switch_90DNS_tester
 fi
 
-#### Fetch lastest Switch_90DNS_tester
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Switch_90DNS_tester.zip -o Switch_90DNS_tester.zip
-#if [ $? -ne 0 ]; then
-#    echo "Switch_90DNS_tester download\033[31m failed\033[0m."
-#else
-#    echo "Switch_90DNS_tester download\033[32m success\033[0m."
-#    unzip -oq Switch_90DNS_tester.zip
-#    rm Switch_90DNS_tester.zip
-#fi
 
 ### Fetch lastest DBI from https://github.com/rashevskyv/dbi/releases/latest
 curl -sL https://api.github.com/repos/rashevskyv/dbi/releases/latest \
@@ -231,6 +143,7 @@ else
     mv DBI.nro ./switch/DBI
 fi
 
+### 更换Z大开发Awoo
 ### Fetch lastest Awoo Installer from https://github.com/dragonflylee/Awoo-Installer/releases/latest
 curl -sL https://api.github.com/repos/dragonflylee/Awoo-Installer/releases/latest \
   | jq '.name' \
@@ -263,11 +176,11 @@ else
     mv HekateToolbox.nro ./switch/HekateToolbox
 fi
 
-### 更换原版NX-Activity-Log拉取地址
-curl -sL https://api.github.com/repos/tallbl0nde/NX-Activity-Log/releases/latest \
+### 更换zdmgithub推送版本的NX-Activity-Log拉取地址
+curl -sL https://api.github.com/repos/zdm65477730/NX-Activity-Log/releases/latest \
   | jq '.name' \
   | xargs -I {} echo NX-Activity-Log {} >> ../description.txt
-curl -sL https://api.github.com/repos/tallbl0nde/NX-Activity-Log/releases/latest \
+curl -sL https://api.github.com/repos/zdm65477730/NX-Activity-Log/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*NX-Activity-Log.nro"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o NX-Activity-Log.nro
@@ -279,31 +192,6 @@ else
     mv NX-Activity-Log.nro ./switch/NX-Activity-Log
 fi
 
-#### Fetch lastest NX-Activity-Log
-#curl -sL https://raw.githubusercontent.com/huangqian8/SwitchPlugins/main/plugins/NX-Activity-Log.zip -o NX-Activity-Log.zip
-#if [ $? -ne 0 ]; then
-#    echo "NX-Activity-Log download\033[31m failed\033[0m."
-#else
-#    echo "NX-Activity-Log download\033[32m success\033[0m."
-#    unzip -oq NX-Activity-Log.zip
-#    rm NX-Activity-Log.zip
-#fi
-
-#### Fetch lastest NXThemesInstaller from https://github.com/exelix11/SwitchThemeInjector/releases/latest
-#curl -sL https://api.github.com/repos/exelix11/SwitchThemeInjector/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo NXThemesInstaller {} >> ../description.txt
-#curl -sL https://api.github.com/repos/exelix11/SwitchThemeInjector/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*NXThemesInstaller.nro"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o NXThemesInstaller.nro
-#if [ $? -ne 0 ]; then
-#    echo "NXThemesInstaller download\033[31m failed\033[0m."
-#else
-#    echo "NXThemesInstaller download\033[32m success\033[0m."
-#    mkdir -p ./switch/NXThemesInstaller
-#    mv NXThemesInstaller.nro ./switch/NXThemesInstaller
-#fi
 
 ### Fetch lastest JKSV from https://github.com/J-D-K/JKSV/releases/latest
 curl -sL https://api.github.com/repos/J-D-K/JKSV/releases/latest \
@@ -321,21 +209,6 @@ else
     mv JKSV.nro ./switch/JKSV
 fi
 
-#### Fetch lastest tencent-switcher-gui from https://github.com/CaiMiao/Tencent-switcher-GUI/releases/latest
-#curl -sL https://api.github.com/repos/CaiMiao/Tencent-switcher-GUI/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo tencent-switcher-gui {} >> ../description.txt
-#curl -sL https://api.github.com/repos/CaiMiao/Tencent-switcher-GUI/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*tencent-switcher-gui.nro"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o tencent-switcher-gui.nro
-#if [ $? -ne 0 ]; then
-#    echo "tencent-switcher-gui download\033[31m failed\033[0m."
-#else
-#    echo "tencent-switcher-gui download\033[32m success\033[0m."
-#    mkdir -p ./switch/tencent-switcher-gui
-#    mv tencent-switcher-gui.nro ./switch/tencent-switcher-gui
-#fi
 
 ### Fetch lastest aio-switch-updater from https://github.com/HamletDuFromage/aio-switch-updater/releases/latest
 curl -sL https://api.github.com/repos/HamletDuFromage/aio-switch-updater/releases/latest \
@@ -405,22 +278,6 @@ else
     mv SimpleModManager.nro ./switch/SimpleModManager
 fi
 
-#### Fetch lastest Switchfin from https://github.com/dragonflylee/switchfin/releases/latest
-#curl -sL https://api.github.com/repos/dragonflylee/switchfin/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo Switchfin {} >> ../description.txt
-#curl -sL https://api.github.com/repos/dragonflylee/switchfin/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*Switchfin.nro"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o Switchfin.nro
-#if [ $? -ne 0 ]; then
-#    echo "Switchfin download\033[31m failed\033[0m."
-#else
-#    echo "Switchfin download\033[32m success\033[0m."
-#    mkdir -p ./switch/Switchfin
-#    mv Switchfin.nro ./switch/Switchfin
-#fi
-
 ### Fetch lastest Moonlight from https://github.com/XITRIX/Moonlight-Switch/releases/latest
 curl -sL https://api.github.com/repos/XITRIX/Moonlight-Switch/releases/latest \
   | jq '.tag_name' \
@@ -436,34 +293,6 @@ else
     mkdir -p ./switch/Moonlight-Switch
     mv Moonlight-Switch.nro ./switch/Moonlight-Switch
 fi
-
-#### Fetch lastest theme-patches from https://github.com/exelix11/theme-patches
-#git clone https://github.com/exelix11/theme-patches
-#if [ $? -ne 0 ]; then
-#    echo "theme-patches download\033[31m failed\033[0m."
-#else
-#    echo "theme-patches download\033[32m success\033[0m."
-#    mkdir themes
-#    mv -f theme-patches/systemPatches ./themes/
-#    rm -rf theme-patches
-#fi
-
-### 删除NX-Shell插件
-#### Fetch lastest NX-Shell from https://github.com/joel16/NX-Shell/releases/latest
-#curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
-#  | jq '.tag_name' \
-#  | xargs -I {} echo NX-Shell {} >> ../description.txt
-#curl -sL https://api.github.com/repos/joel16/NX-Shell/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*NX-Shell.nro"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o NX-Shell.nro
-#if [ $? -ne 0 ]; then
-#    echo "NX-Shell download\033[31m failed\033[0m."
-#else
-#    echo "NX-Shell download\033[32m success\033[0m."
-#    mkdir -p ./switch/NX-Shell
-#    mv NX-Shell.nro ./switch/NX-Shell
-#fi
 
 ### Fetch lastest ezRemote from https://github.com/cy33hc/switch-ezremote-client/releases/latest
 curl -sL https://api.github.com/repos/cy33hc/switch-ezremote-client/releases/latest \
@@ -545,10 +374,14 @@ else
     rm sys-con.zip
 fi
 
-
-### Fetch nx-ovlloader
-### Tesla加载器，目前只能用仓库方案，没联系上zdm大佬
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/nx-ovlloader.zip -o nx-ovlloader.zip
+## Fetch lastest nx-ovlloader from https://github.com/zdm65477730/nx-ovlloader/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/nx-ovlloader/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/nx-ovlloader/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*nx-ovlloader[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o nx-ovlloader.zip
 if [ $? -ne 0 ]; then
     echo "nx-ovlloader download\033[31m failed\033[0m."
 else
@@ -556,6 +389,17 @@ else
     unzip -oq nx-ovlloader.zip
     rm nx-ovlloader.zip
 fi
+
+#### Fetch nx-ovlloader
+#### Tesla加载器，目前只能用仓库方案，没联系上zdm大佬
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/nx-ovlloader.zip -o nx-ovlloader.zip
+#if [ $? -ne 0 ]; then
+#    echo "nx-ovlloader download\033[31m failed\033[0m."
+#else
+#    echo "nx-ovlloader download\033[32m success\033[0m."
+#    unzip -oq nx-ovlloader.zip
+#    rm nx-ovlloader.zip
+#fi
 
 ### Write config.ini in /config/tesla
 cat > ./config/tesla/config.ini << ENDOFFILE
@@ -641,12 +485,12 @@ else
     rm sys-patch.zip
 fi
 
-### 更换ldn_mitm为DefenderOfHyrule接手开发版本
-### Fetch sys-patch from https://github.com/DefenderOfHyrule/ldn_mitm/releases/latest
-curl -sL https://api.github.com/repos/DefenderOfHyrule/ldn_mitm/releases/latest \
+### 更换ldn_mitm为z大接手开发版本
+### Fetch sys-patch from https://github.com/zdm65477730/ldn_mitm/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/ldn_mitm/releases/latest \
   | jq '.name' \
   | xargs -I {} echo ldn_mitm {} >> ../description.txt
-curl -sL https://api.github.com/repos/DefenderOfHyrule/ldn_mitm/releases/latest \
+curl -sL https://api.github.com/repos/zdm65477730/ldn_mitm/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*ldn_mitm.zip"' \
   | sed 's/"//g' \
   | xargs -I {} curl -sL {} -o ldn_mitm.zip
@@ -657,51 +501,6 @@ else
     unzip -oq ldn_mitm.zip
     rm ldn_mitm.zip
 fi
-
-
-#### Fetch Ultrahand
-#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
-#if [ $? -ne 0 ]; then
-#    echo "Ultrahand download\033[31m failed\033[0m."
-#else
-#    echo "Ultrahand download\033[32m success\033[0m."
-#    unzip -oq Ultrahand.zip
-#    rm Ultrahand.zip
-#fi
-
-#### Fetch Ultrahand
-#### Tesla初始菜单，目前只能用仓库方案用以极限超频，没联系上zdm大佬
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Ultrahand.zip -o Ultrahand.zip
-#if [ $? -ne 0 ]; then
-#    echo "Ultrahand download\033[31m failed\033[0m."
-#else
-#    echo "Ultrahand download\033[32m success\033[0m."
-#    unzip -oq Ultrahand.zip
-#    rm Ultrahand.zip
-#fi
-
-#### Fetch Tesla-Menu
-#### Tesla初始菜单，目前只能用仓库方案，没联系上zdm大佬
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/Tesla-Menu.zip -o Tesla-Menu.zip
-#if [ $? -ne 0 ]; then
-#    echo "Tesla-Menu download\033[31m failed\033[0m."
-#else
-#    echo "Tesla-Menu download\033[32m success\033[0m."
-#    unzip -oq Tesla-Menu.zip
-#    rm Tesla-Menu.zip
-#fi
-
-#### Write sort.cfg in /config/Tesla-Menu/sort.cfg
-#cat > ./config/Tesla-Menu/sort.cfg << ENDOFFILE
-#EdiZon
-#ovl-sysmodules
-#StatusMonitor
-#sys-clk-overlay
-#ReverseNX-RT
-#QuickNTP
-#sys-patch-overlay
-#ENDOFFILE
 
 # 这里为ultrahand菜单项写中文name
 ### Write overlays.ini in /config/ultrahand
@@ -798,8 +597,15 @@ custom_name=联机补丁
 custom_version=
 ENDOFFILE
 
-### Fetch EdiZon
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/EdiZon.zip -o EdiZon.zip
+### z大金手指插件
+## Fetch lastest EdiZon-Overlay from https://github.com/zdm65477730/EdiZon-Overlay/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/EdiZon-Overlay/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/EdiZon-Overlay/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*EdiZon[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o EdiZon.zip
 if [ $? -ne 0 ]; then
     echo "EdiZon download\033[31m failed\033[0m."
 else
@@ -808,8 +614,25 @@ else
     rm EdiZon.zip
 fi
 
-### Fetch ovl-sysmodules
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ovl-sysmodules.zip -o ovl-sysmodules.zip
+#### Fetch EdiZon
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/EdiZon.zip -o EdiZon.zip
+#if [ $? -ne 0 ]; then
+#    echo "EdiZon download\033[31m failed\033[0m."
+#else
+#    echo "EdiZon download\033[32m success\033[0m."
+#    unzip -oq EdiZon.zip
+#    rm EdiZon.zip
+#fi
+
+### z大系统模块插件
+## Fetch lastest ovl-sysmodules from https://github.com/zdm65477730/ovl-sysmodules/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/ovl-sysmodules/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/ovl-sysmodules/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ovl-sysmodules[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ovl-sysmodules.zip
 if [ $? -ne 0 ]; then
     echo "ovl-sysmodules download\033[31m failed\033[0m."
 else
@@ -818,31 +641,15 @@ else
     rm ovl-sysmodules.zip
 fi
 
-#### 直接拉取原版StatusMonitor
-#### Fetch StatusMonitor
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/StatusMonitor.zip -o StatusMonitor.zip
-#if [ $? -ne 0 ]; then
-#    echo "StatusMonitor download\033[31m failed\033[0m."
-#else
-#    echo "StatusMonitor download\033[32m success\033[0m."
-#    unzip -oq StatusMonitor.zip
-#    rm StatusMonitor.zip
-#fi
 
-#### Fetch StatusMonitor from https://github.com/masagrator/Status-Monitor-Overlay/releases/latest
-#curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
-#  | jq '.name' \
-#  | xargs -I {} echo {} >> ../description.txt
-#curl -sL https://api.github.com/repos/masagrator/Status-Monitor-Overlay/releases/latest \
-#  | grep -oP '"browser_download_url": "\Khttps://[^"]*Status-Monitor-Overlay.zip"' \
-#  | sed 's/"//g' \
-#  | xargs -I {} curl -sL {} -o Status-Monitor-Overlay.zip
+#### Fetch ovl-sysmodules
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ovl-sysmodules.zip -o ovl-sysmodules.zip
 #if [ $? -ne 0 ]; then
-#    echo "Status-Monitor-Overlay download\033[31m failed\033[0m."
+#    echo "ovl-sysmodules download\033[31m failed\033[0m."
 #else
-#    echo "Status-Monitor-Overlay download\033[32m success\033[0m."
-#    unzip -oq Status-Monitor-Overlay.zip
-#    rm Status-Monitor-Overlay.zip
+#    echo "ovl-sysmodules download\033[32m success\033[0m."
+#    unzip -oq ovl-sysmodules.zip
+#    rm ovl-sysmodules.zip
 #fi
 
 ### 拉取wei2ard大佬汉化过的状态监控（带电压版本）
@@ -856,19 +663,15 @@ else
     rm Status-Monitor-Overlay.zip
 fi
 
-# 直接从EOS作者的GitHub上拉取他提供的sys-clk
-#### Fetch sys-clk-oc
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-clk-oc.zip -o sys-clk-oc.zip
-#if [ $? -ne 0 ]; then
-#    echo "sys-clk-oc download\033[31m failed\033[0m."
-#else
-#    echo "sys-clk-oc download\033[32m success\033[0m."
-#    unzip -oq sys-clk-oc.zip
-#    rm sys-clk-oc.zip
-#fi
 
-### Fetch ReverseNX-RT
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ReverseNX-RT.zip -o ReverseNX-RT.zip
+## Fetch lastest ReverseNX-RT from https://github.com/zdm65477730/ReverseNX-RT/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/ReverseNX-RT/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/ReverseNX-RT/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*ReverseNX-RT[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o ReverseNX-RT.zip
 if [ $? -ne 0 ]; then
     echo "ReverseNX-RT download\033[31m failed\033[0m."
 else
@@ -877,28 +680,27 @@ else
     rm ReverseNX-RT.zip
 fi
 
-#### Fetch ldn_mitm
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ldn_mitm.zip -o ldn_mitm.zip
+
+#### Fetch ReverseNX-RT
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ReverseNX-RT.zip -o ReverseNX-RT.zip
 #if [ $? -ne 0 ]; then
-#    echo "ldn_mitm download\033[31m failed\033[0m."
+#    echo "ReverseNX-RT download\033[31m failed\033[0m."
 #else
-#    echo "ldn_mitm download\033[32m success\033[0m."
-#    unzip -oq ldn_mitm.zip
-#    rm ldn_mitm.zip
+#    echo "ReverseNX-RT download\033[32m success\033[0m."
+#    unzip -oq ReverseNX-RT.zip
+#    rm ReverseNX-RT.zip
 #fi
 
-#### Fetch emuiibo
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/emuiibo.zip -o emuiibo.zip
-#if [ $? -ne 0 ]; then
-#    echo "emuiibo download\033[31m failed\033[0m."
-#else
-#    echo "emuiibo download\033[32m success\033[0m."
-#    unzip -oq emuiibo.zip
-#    rm emuiibo.zip
-#fi
 
-### Fetch QuickNTP
-curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/QuickNTP.zip -o QuickNTP.zip
+### z大底座模式插件
+## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o QuickNTP.zip
 if [ $? -ne 0 ]; then
     echo "QuickNTP download\033[31m failed\033[0m."
 else
@@ -907,27 +709,32 @@ else
     rm QuickNTP.zip
 fi
 
-
-#### Fetch sys-tune
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-tune.zip -o sys-tune.zip
+#### Fetch QuickNTP
+#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/QuickNTP.zip -o QuickNTP.zip
 #if [ $? -ne 0 ]; then
-#    echo "sys-tune download\033[31m failed\033[0m."
+#    echo "QuickNTP download\033[31m failed\033[0m."
 #else
-#    echo "sys-tune download\033[32m success\033[0m."
-#    unzip -oq sys-tune.zip
-#    rm sys-tune.zip
+#    echo "QuickNTP download\033[32m success\033[0m."
+#    unzip -oq QuickNTP.zip
+#    rm QuickNTP.zip
 #fi
 
-#### Fetch sys-patch
-#### 更新版本为gba仓库版本呢，不用东方的包了
-#curl -sL https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/sys-patch.zip -o sys-patch.zip
-#if [ $? -ne 0 ]; then
-#    echo "sys-patch download\033[31m failed\033[0m."
-#else
-#    echo "sys-patch download\033[32m success\033[0m."
-#    unzip -oq sys-patch.zip
-#    rm sys-patch.zip
-#fi
+### z大时间校准插件
+## Fetch lastest Fizeau from https://github.com/zdm65477730/Fizeau/releases/latest
+curl -sL https://api.github.com/repos/zdm65477730/Fizeau/releases/latest \
+  | jq '.name' \
+  | xargs -I {} echo  {} >> ../description.txt
+curl -sL https://api.github.com/repos/zdm65477730/Fizeau/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*Fizeau[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o Fizeau.zip
+if [ $? -ne 0 ]; then
+    echo "Fizeau download\033[31m failed\033[0m."
+else
+    echo "Fizeau download\033[32m success\033[0m."
+    unzip -oq Fizeau.zip
+    rm Fizeau.zip
+fi
 
 ### MasterVolume音量调节插件
 ### Fetch lastest MasterVolume from https://github.com/averne/MasterVolume/releases/latest
@@ -937,13 +744,14 @@ curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
 curl -sL https://api.github.com/repos/averne/MasterVolume/releases/latest \
   | grep -oP '"browser_download_url": "\Khttps://[^"]*MasterVolume.*\.zip[^"]*"' \
   | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o MasterVolume.ovl
+  | xargs -I {} curl -sL {} -o MasterVolume.zip
 if [ $? -ne 0 ]; then
     echo "MasterVolume.ovl\033[31m failed\033[0m."
 else
     echo "MasterVolume.ovl\033[32m success\033[0m."
 
-    mv MasterVolume.ovl ./switch/.overlays
+    unzip -oq MasterVolume.zip
+    rm MasterVolume.zip
 fi
 
 ### 特斯拉官方初始菜单Ultrahand
@@ -993,14 +801,9 @@ else
 fi
 
 # -------------------------------------------
-cat >> ../description.txt << ENDOFFILE
-nx-ovlloader
-EdiZon
-ovl-sysmodules
-ReverseNX-RT
-QuickNTP
-sys-patch-overlay
-ENDOFFILE
+#cat >> ../description.txt << ENDOFFILE
+#sys-patch-overlay
+#ENDOFFILE
 
 ### Rename hekate_ctcaer_*.bin to payload.bin
 find . -name "*hekate_ctcaer*" -exec mv {} payload.bin \;
