@@ -658,34 +658,22 @@ else
     rm ReverseNX-RT.zip
 fi
 
-### z大时间校准插件
+### z大底座模式插件
+## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
   | xargs -I {} echo  {} >> ../description.txt
-DOWNLOAD_URL=$(curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest | jq -r '.assets[] | select(.name == "QuickNTP.zip") | .browser_download_url')
-if [ -z "$DOWNLOAD_URL" ]; then
-    echo -e "\033[31m错误：无法获取 QuickNTP.zip 的下载链接。\033[0m"
-    exit 1
-fi
-curl -L "$DOWNLOAD_URL" -o QuickNTP.zip || { echo -e "QuickNTP 下载\033[31m 失败\033[0m."; exit 1; }
-if [ ! -f QuickNTP.zip ]; then
-    echo -e "\033[31m错误：curl 命令返回成功，但文件 QuickNTP.zip 不存在！\033[0m"
-    exit 1
-fi
-echo "QuickNTP download\033[32m success\033[0m."
-if ! file QuickNTP.zip | grep -q "Zip archive"; then
-    echo -e "\033[31m错误：下载的文件 QuickNTP.zip 不是一个有效的 zip 归档文件。\033[0m"
-    rm QuickNTP.zip
-    exit 1
-fi
-echo "Attempting to unzip QuickNTP.zip..."
-unzip -oq QuickNTP.zip
+curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
+  | sed 's/"//g' \
+  | xargs -I {} curl -sL {} -o QuickNTP.zip
 if [ $? -ne 0 ]; then
-    echo -e "解压\033[31m 失败\033[0m."
+    echo "QuickNTP download\033[31m failed\033[0m."
 else
-    echo -e "解压\033[32m 成功\033[0m."
+    echo "QuickNTP download\033[32m success\033[0m."
+    unzip -oq QuickNTP.zip
+    rm QuickNTP.zip
 fi
-rm QuickNTP.zip
 
 
 ### z大色彩校准插件
