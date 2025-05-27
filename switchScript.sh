@@ -658,7 +658,7 @@ else
     rm ReverseNX-RT.zip
 fi
 
-### z大底座模式插件
+### z大时间校准插件
 ## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
@@ -669,6 +669,8 @@ curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | xargs -I {} curl -sL {} -o QuickNTP.zip
 if [ $? -ne 0 ]; then
     echo "QuickNTP download\033[31m failed\033[0m."
+elif [ ! -s QuickNTP.zip ]; then
+    echo "QuickNTP download\033[31m failed\033[0m: Downloaded file is missing or empty."
 else
     echo "QuickNTP download\033[32m success\033[0m."
     unzip -oq QuickNTP.zip
