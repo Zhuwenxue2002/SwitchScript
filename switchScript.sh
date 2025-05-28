@@ -29,30 +29,55 @@ download_github_release() {
     echo "--- Processing GitHub Release: $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # Capture curl output and status separately, piping through sed to remove non-printable and non-space characters
-    release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | sed 's/[^[:print:][:space:]]//g')
+    # Capture curl output and status separately
+    release_info_raw=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
     local curl_status=$? # Capture curl exit status immediately
 
     # Check curl status first
     if [ $curl_status -ne 0 ]; then
         echo "Error: curl failed to fetch release info for $repo (exit status $curl_status).\\033[31m failed\\\\033[0m."
         # Optionally print release_info here for debugging if curl failed but still produced output
-        # echo "Curl output: $release_info"
+        # echo "Curl output: $release_info_raw"
         return 1
     fi
 
-    # Now check if the output is valid JSON using jq
-    # After cleaning potentially problematic characters with sed
-    if ! echo "$release_info" | jq -e . > /dev/null; then
-        echo "Error: Fetched data for $repo is not valid JSON after cleaning.\\033[31m failed\\\\033[0m."
-        # Print the problematic output for debugging
-        echo "Problematic output: $release_info"
+    # Replace problematic control characters and escape backslashes and quotes in the raw string before parsing with fromjson
+    # This is a heuristic approach to fix potentially malformed JSON strings from the API.
+    cleaned_info=$(echo "$release_info_raw" | \
+      awk '{
+        s = $0;
+        # Escape backslash and double quotes first
+        gsub(/\\/, "\\\\", s);
+        gsub(/"/, "\\\"", s);
+        # Escape common JSON control characters
+        gsub(/\n/, "\\n", s);
+        gsub(/\r/, "\\r", s);
+        gsub(/\t/, "\\t", s);
+        gsub(/\x08/, "\\b", s); # Backspace
+        gsub(/\x0c/, "\\f", s); # Form feed
+        # Note: This applies these replacements globally to the raw output.
+        # It assumes control characters, backslashes, and quotes only appear
+        # in contexts where they *should* be escaped (i.e., within string values).
+        # This is a reasonable heuristic for typical JSON data, but not foolproof
+        # for truly malformed or adversarial input.
+        print s;
+      }')
+
+    # Now attempt to parse the cleaned string as JSON using jq -s and fromjson
+    # jq -s '.' slurps all input lines into a single array. We take the first element (the concatenated string)
+    # and use fromjson to parse it as a JSON object.
+    processed_info=$(echo "$cleaned_info" | jq -s '.[0] | fromjson')
+
+    # Check if fromjson parsing was successful
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to parse cleaned data as JSON using fromjson.\\033[31m failed\\\\033[0m."
+        echo "Problematic cleaned output (first 500 chars): ${cleaned_info:0:500}" # Print only first 500 chars to save space
         return 1
     fi
 
-    # If both checks pass, proceed with parsing and downloading
-    release_name=$(echo "$release_info" | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    download_url=$(echo "$release_info" | jq -r ".assets[] | select(.name | match(\"$asset_pattern\")) | .browser_download_url")
+    # If parsing is successful, proceed with extracting information from the parsed JSON object
+    release_name=$(echo "$processed_info" | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
+    download_url=$(echo "$processed_info" | jq -r ".assets[] | select(.name | match(\\\"$asset_pattern\\\")) | .browser_download_url")
 
     if [ -z "$release_name" ]; then
         echo "Warning: Could not extract release name for $repo."
@@ -60,63 +85,48 @@ download_github_release() {
     fi
 
     if [ -z "$download_url" ]; then
-        echo "Error: Could not find asset matching '$asset_pattern' for $repo\033[31m failed\\033[0m."
-        echo "Available assets:"
-        echo "$release_info" | jq -r '.assets[].name'
+        echo "Error: Could not find asset matching '$asset_pattern' for $repo\\033[31m failed\\\\033[0m.\"\n        echo \"Available assets:\"\n        echo "$processed_info" | jq -r \'.assets[].name\' # Use processed_info here
         return 1
     fi
 
     # Add release name to description.txt
     echo "$description_name $release_name" >> ../description.txt
-    echo "Downloading $local_filename from $download_url..."
-
+    echo "Downloading $local_filename from $download_url...\"\n
     # Download the file
     curl -sL "$download_url" -o "$local_filename"
 
     if [ $? -ne 0 ]; then
-        echo "$local_filename download\033[31m failed\\033[0m."
+        echo "$local_filename download\\033[31m failed\\\\033[0m."
         return 1
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download\033[31m failed\033[0m: Downloaded file is missing or empty."
-        return 1
+        echo "$local_filename download\\033[31m failed\\033[0m: Downloaded file is missing or empty.\"\n        return 1
     fi
 
-    echo "$local_filename download\033[32m success\033[0m."
-
+    echo "$local_filename download\\033[32m success\\033[0m.\"\n
     # Process the downloaded file (unzip, move, or extract specific file)
-    if [ -n "$target_dir" ]; then # If target_dir is provided, assume it's a zip file to be unzipped
-        echo "Unzipping $local_filename to $target_dir..."
-        if unzip -oq "$local_filename" -d "$target_dir"; then
-             echo "$local_filename extraction\033[32m success\033[0m."
-        else
-             echo "$local_filename extraction\033[31m failed\033[0m."
-             # Optionally, keep the failed zip file for debugging
-             # rm "$local_filename"
-             return 1
+    if [ -n "$target_dir" ]; then # If target_dir is provided, assume it\'s a zip file to be unzipped
+        echo "Unzipping $local_filename to $target_dir...\"\n        if unzip -oq "$local_filename" -d "$target_dir"; then
+             echo "$local_filename extraction\\033[32m success\\033[0m.\"\n        else
+             echo "$local_filename extraction\\033[31m failed\\033[0m.\"\n             # Optionally, keep the failed zip file for debugging
+             # rm "$local_filename"\n             return 1
         fi
     elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
         echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
         # Ensure destination directory exists for specific file extraction
         mkdir -p "$specific_file_dest"
         if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
-            echo "$specific_file extraction\033[32m success\033[0m."
-        else
-            echo "$specific_file extraction\033[31m failed\033[0m."
-            # Optionally, keep the failed zip file for debugging
-            # rm "$local_filename"
-            return 1
+            echo "$specific_file extraction\\033[32m success\\033[0m.\"\n        else
+            echo "$specific_file extraction\\033[31m failed\\033[0m.\"\n            # Optionally, keep the failed zip file for debugging
+            # rm "$local_filename"\n            return 1
         fi
-    else # Otherwise, assume it's a single file to be moved (default destination ./bootloader/payloads/)
-        echo "Moving $local_filename to ./bootloader/payloads/..."
-        # Ensure destination directory exists for single file move
+    else # Otherwise, assume it\'s a single file to be moved (default destination ./bootloader/payloads/)
+        echo "Moving $local_filename to ./bootloader/payloads/...\"\n        # Ensure destination directory exists for single file move
         mkdir -p ./bootloader/payloads/
         if mv "$local_filename" ./bootloader/payloads/; then
-            echo "$local_filename move\033[32m success\033[0m."
-        else
-            echo "$local_filename move\033[31m failed\033[0m."
-            return 1
+            echo "$local_filename move\\033[32m success\\033[0m.\"\n        else
+            echo "$local_filename move\\033[31m failed\\033[0m.\"\n            return 1
         fi
     fi
 
