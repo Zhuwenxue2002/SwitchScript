@@ -29,34 +29,39 @@ download_github_release() {
     echo "--- Processing GitHub Release: $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # Capture curl output and status separately
-    release_info_raw=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
-    local curl_status=$? # Capture curl exit status immediately
+    # Use curl to fetch raw data, pipe to awk for cleaning, then pipe to jq for parsing
+    # Check exit status after each command in the pipeline
+    if ! processed_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | \
+                         awk '{ s = $0; gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s); gsub(/\n/, "\\n", s); gsub(/\r/, "\\r", s); gsub(/\t/, "\\t", s); gsub(/\x08/, "\\b", s); gsub(/\x0c/, "\\f", s); print s; }' | \
+                         jq -s '.[0] | fromjson'); then
 
-    # Check curl status first
-    if [ $curl_status -ne 0 ]; then
-        echo "Error: curl failed to fetch release info for $repo (exit status $curl_status).\\033[31m failed\\\\033[0m."
-        # Optionally print release_info here for debugging if curl failed but still produced output
-        # echo "Curl output: $release_info_raw"
+        # If any command in the pipeline failed, the overall command substitution fails
+        # We need to check the exit status of the last command in the pipeline (jq)
+        # However, directly getting the exit status of a specific command in a pipeline
+        # within a command substitution is tricky. A common pattern is to check the
+        # exit status of the command substitution itself, and infer the failure.
+        # The error messages from jq and previous commands will provide clues.
+
+        # We can also add checks after each command if not in a pipeline, but
+        # for conciseness and avoiding intermediate variables, this is preferred.
+        # Let's just check the final command substitution status.
+
+        echo "Error: Failed to fetch or process release info for $repo."
+        # The error messages from curl, awk, or jq should provide more details above.
         return 1
     fi
 
-    # Replace problematic control characters and escape backslashes and quotes in the raw string before parsing with fromjson
-    # This is a heuristic approach to fix potentially malformed JSON strings from the API.
-    cleaned_info=$(echo "$release_info_raw" | \
-      awk '{ s = $0; gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s); gsub(/\n/, "\\n", s); gsub(/\r/, "\\r", s); gsub(/\t/, "\\t", s); gsub(/\x08/, "\\b", s); gsub(/\x0c/, "\\f", s); print s; }')
+    # If command substitution was successful, processed_info contains the parsed JSON object.
+    # Now we can proceed with extracting information from processed_info.
 
-    # Now attempt to parse the cleaned string as JSON using jq -s and fromjson
-    # jq -s '.' slurps all input lines into a single array. We take the first element (the concatenated string)
-    # and use fromjson to parse it as a JSON object.
-    processed_info=$(echo "$cleaned_info" | jq -s '.[0] | fromjson')
-
-    # Check if fromjson parsing was successful
-    if [ $? -ne 0 ]; then
-        echo "Error: Failed to parse cleaned data as JSON using fromjson.\\033[31m failed\\\\033[0m."
-        echo "Problematic cleaned output (first 500 chars): ${cleaned_info:0:500}" # Print only first 500 chars to save space
-        return 1
-    fi
+    # Check if the fetched data (now in processed_info after successful jq parsing) is valid JSON
+    # This check is technically redundant if the jq -s '.[0] | fromjson' was successful,
+    # but kept for clarity if needed.
+    # if ! echo "$processed_info" | jq -e . > /dev/null; then
+    #     echo "Internal Error: Parsed data is unexpectedly not valid JSON.\\033[31m failed\\\\033[0m."
+    #     echo "Problematic processed info: $processed_info"
+    #     return 1
+    # fi
 
     # If parsing is successful, proceed with extracting information from the parsed JSON object
     release_name=$(echo "$processed_info" | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
