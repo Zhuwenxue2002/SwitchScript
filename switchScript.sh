@@ -30,41 +30,70 @@ glob_to_regex() {
 # $6: Specific file name to extract from zip (optional, for extracting a single file like .nro or .bin)
 # $7: Destination directory for the extracted file (optional, used with $6)
 download_github_release() {
-    local repo="$1" asset_pattern="$2" local_filename="$3" target_dir="$4"
+    local repo="$1"
+    local asset_pattern="$2"
+    local local_filename="$3"
+    local target_dir="$4"
     local description_name="${5:-$repo}"
+    local specific_file="$6"
+    local specific_file_dest="$7"
 
-    # 获取 GitHub API 响应头（仅限速率限制）
-    local rate_remaining=$(curl -sL -I -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest" \
-        | grep -i "x-ratelimit-remaining:" \
-        | awk '{print $2}' \
-        | tr -d '\r')
-    rate_remaining=${rate_remaining:-0}
+    # Convert glob pattern to regex for jq
+    local regex_pattern=$(glob_to_regex "$asset_pattern")
 
-    # 检查速率限制
+    echo "--- Processing $repo ---"
+    echo "Fetching latest release info for $repo..."
+
+    # Add GitHub API rate limit check
+    release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
+    local http_status=$(curl -sL -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo/releases/latest")
+    local rate_remaining=$(curl -sL -I "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
+
+    if [[ "$http_status" -ne 200 ]]; then
+        echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
+        return 1
+    fi
+
     if [[ "$rate_remaining" -lt 5 ]]; then
         echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
     fi
 
-    # 获取 Release 信息（禁止输出 JSON）
-    local release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
-    if ! echo "$release_info" | jq -e . >/dev/null 2>&1; then
-        echo "::error::❌ Failed to parse GitHub API response"
+    if ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
+        echo "::error::❌ Invalid JSON response for $repo"
         return 1
     fi
 
-    # 提取下载链接（静默模式）
-    local download_url=$(echo "$release_info" | jq -r '.assets[] | select(.name | test("'"$asset_pattern"'")) | .browser_download_url' | head -n 1)
+    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name')
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | head -n 1)
+
+    if [ -z "$release_name" ]; then
+        echo "::warning::⚠️ Could not extract release name for $repo."
+        release_name="Unknown Release"
+    fi
+
     if [ -z "$download_url" ]; then
-        echo "::error::❌ No asset found matching pattern: $asset_pattern"
+        echo "::error::❌ Could not find asset matching '$asset_pattern' for $repo"
+        echo "Available assets:"
+        echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.assets[].name'
         return 1
     fi
 
-    # 下载文件（静默模式）
+    # Add release name to description.txt
+    echo "$description_name $release_name" >> ../description.txt
+    echo "Downloading $local_filename from $download_url..."
+
+    # Download the file
     if ! curl -sL -f "$download_url" -o "$local_filename"; then
-        echo "::error::❌ Download failed: $local_filename"
+        echo "::error::❌ $local_filename download failed (HTTP $?)"
         return 1
     fi
-    echo "::notice::✅ Downloaded: $local_filename"
+
+    if [ ! -s "$local_filename" ]; then
+        echo "::error::❌ $local_filename download failed: Downloaded file is missing or empty"
+        return 1
+    fi
+
+    echo "::notice::✅ $local_filename download success."
 
     # Process the file based on extension
     if [[ "$local_filename" == *.zip ]]; then
@@ -77,14 +106,14 @@ download_github_release() {
                 echo "::error::❌ $local_filename extraction failed"
                 return 1
             fi
-        elif [ -n "$6" ] && [ -n "$7" ]; then
-            echo "Extracting $6 from $local_filename to $7..."
-            mkdir -p "$7"
-            if unzip -oq "$local_filename" "$6" -d "$7"; then
-                echo "::notice::✅ $6 extraction success"
+        elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then
+            echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
+            mkdir -p "$specific_file_dest"
+            if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
+                echo "::notice::✅ $specific_file extraction success"
                 rm "$local_filename"
             else
-                echo "::error::❌ $6 extraction failed"
+                echo "::error::❌ $specific_file extraction failed"
                 return 1
             fi
         else
