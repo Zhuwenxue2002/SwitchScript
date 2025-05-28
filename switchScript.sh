@@ -52,26 +52,26 @@ download_github_release() {
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # 单次 API 请求，严格提取 HTTP 状态码和 JSON
+    # 单次 API 请求，分离响应头和 JSON 体
     response=$(curl -sL -i -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         "https://api.github.com/repos/$repo/releases/latest")
     
-    # 提取 HTTP 状态码（仅匹配数字）
-    http_status=$(echo "$response" | grep -oP '^HTTP/\d\.\d \K\d{3}' | head -n 1)
-    # 提取速率限制（跳过非数字行）
+    # 提取 HTTP 状态码（兼容重定向）
+    http_status=$(echo "$response" | grep -oP '(^HTTP/\d\.\d |^HTTP\/2 )\K\d{3}' | tail -n 1)
+    # 提取速率限制
     rate_remaining=$(echo "$response" | grep -i "x-ratelimit-remaining:" | grep -oP '\d+' | head -n 1)
-    # 提取 JSON 响应体
-    release_info=$(echo "$response" | awk '/^{/,0')
+    # 提取 JSON 响应体（从最后一个空行后开始）
+    release_info=$(echo "$response" | awk 'NR>1 && /^\r?$/{body=1; next} body')
 
     # 检查 HTTP 状态码
-    if ! [[ "$http_status" =~ ^[0-9]+$ ]] || [ "$http_status" -ne 200 ]; then
-        echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
+    if [[ -z "$http_status" ]] || [ "$http_status" -ne 200 ]; then
+        echo "::error::❌ HTTP ${http_status:-"Unknown"}: Failed to fetch release info for $repo"
         return 1
     fi
 
     # 检查 API 速率限制
-    if ! [[ "$rate_remaining" =~ ^[0-9]+$ ]] || [ "$rate_remaining" -lt 5 ]; then
+    if [[ -n "$rate_remaining" ]] && [ "$rate_remaining" -lt 5 ]; then
         echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
     fi
 
