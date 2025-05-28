@@ -29,19 +29,20 @@ download_github_release() {
     echo "--- Processing GitHub Release: $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # Capture curl output and status separately
-    release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
+    # Capture curl output and status separately, piping through sed to remove control characters
+    release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | sed 's/[[:cntrl:]]//g')
     local curl_status=$? # Capture curl exit status immediately
 
     # Check curl status first
     if [ $curl_status -ne 0 ]; then
-        echo "Error: curl failed to fetch release info for $repo (exit status $curl_status).\033[31m failed\\033[0m."
+        echo "Error: curl failed to fetch release info for $repo (exit status $curl_status).\\033[31m failed\\\\033[0m."
         # Optionally print release_info here for debugging if curl failed but still produced output
         # echo "Curl output: $release_info"
         return 1
     fi
 
     # Now check if the output is valid JSON using jq
+    # The sed command above should prevent most jq parsing errors due to control characters.
     if ! echo "$release_info" | jq -e . > /dev/null; then
         echo "Error: Fetched data for $repo is not valid JSON.\033[31m failed\\033[0m."
         # Print the problematic output for debugging
