@@ -30,6 +30,11 @@ download_github_release() {
     echo "Fetching latest release info for $repo..."
     release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
 
+    # Add this line to see the raw output from curl
+    echo "Raw curl output for $repo:"
+    echo "$release_info"
+    echo "---"
+
     if [ $? -ne 0 ] || ! echo "$release_info" | jq -e . > /dev/null; then
         echo "Error: Failed to fetch release info for $repo\033[31m failed\\033[0m."
         return 1
