@@ -330,6 +330,7 @@ download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" ".
 
 # 3. 系统工具插件
 download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
+download_github_release "zdm65477730/ldn_mitm" "ldn_mitm.zip" "" "./switch/ldn_mitm" "LDN_MITM" || { echo "::error::❌ LDN_MITM processing failed"; exit 1; }
 download_github_release "zdm65477730/ovl-sysmodules" "*.zip" "ovl-sysmodules.zip" "./" "ovl-sysmodules" || { echo "::error::❌ ovl-sysmodules failed"; exit 1; }
 download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
 download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
@@ -338,7 +339,7 @@ download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "M
 download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 # 解压并清理
 if [ -f "Status-Monitor-Overlay.zip" ]; then
-    unzip -oq Status-Monitor-Overlay.zip -d ./config/ultrahand/ && \
+    unzip -oq Status-Monitor-Overlay.zip -d ./ && \
     rm Status-Monitor-Overlay.zip || {
         echo "::error::❌ Failed to process Status-Monitor-Overlay"
         exit 1
