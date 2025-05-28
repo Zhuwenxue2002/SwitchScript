@@ -330,7 +330,7 @@ download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" ".
 
 # 3. 系统工具插件
 download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
-download_github_release "zdm65477730/ldn_mitm" "ldn_mitm.zip" "" "./switch/ldn_mitm" "LDN_MITM" || { echo "::error::❌ LDN_MITM processing failed"; exit 1; }
+download_github_release "zdm65477730/ldn_mitm" "*.zip" "ldn_mitm.zip" "./" "ldn_mit" || { echo "::error::❌ ldn_mit processing failed"; exit 1; }
 download_github_release "zdm65477730/ovl-sysmodules" "*.zip" "ovl-sysmodules.zip" "./" "ovl-sysmodules" || { echo "::error::❌ ovl-sysmodules failed"; exit 1; }
 download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
 download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
