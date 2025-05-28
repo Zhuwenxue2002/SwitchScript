@@ -660,18 +660,76 @@ fi
 
 ### z大时间校准插件
 ## Fetch lastest QuickNTP from https://github.com/zdm65477730/QuickNTP/releases/latest
+
+# Add QuickNTP version to description (this part seems independent of download/unzip success/failure, keep it as is)
 curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
   | jq '.name' \
   | xargs -I {} echo  {} >> ../description.txt
-curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
-  | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
-  | sed 's/"//g' \
-  | xargs -I {} curl -sL {} -o QuickNTP.zip
-if [ $? -ne 0 ]; then
-    echo "QuickNTP download\033[31m failed\033[0m."
-else
-    echo "QuickNTP download\033[32m success\033[0m."
-    unzip -oq QuickNTP.zip
+
+# Retry logic for QuickNTP download and unzip
+max_attempts=5 # 最大尝试次数
+attempt_num=1  # 当前尝试次数
+quickntp_success=false # 标记是否成功
+
+while [ $attempt_num -le $max_attempts ]; do
+  echo "Attempt $attempt_num to download and extract QuickNTP..."
+
+  # Clean up previous attempt files before retrying
+  rm -f QuickNTP.zip
+
+  # Get download URL
+  download_url=$(curl -sL https://api.github.com/repos/zdm65477730/QuickNTP/releases/latest \
+                 | grep -oP '"browser_download_url": "\Khttps://[^"]*QuickNTP[^"]*.zip"' \
+                 | sed 's/"//g')
+
+  if [ -z "$download_url" ]; then
+    echo "Failed to get QuickNTP download URL on attempt $attempt_num."
+    # URL获取失败，继续重试
+  else
+    # Download the zip file
+    curl -sL "$download_url" -o QuickNTP.zip
+    curl_status=$?
+
+    # Check if download was successful AND file exists and is non-empty
+    if [ $curl_status -eq 0 ] && [ -s QuickNTP.zip ]; then
+      echo "QuickNTP download\033[32m success\033[0m on attempt $attempt_num."
+
+      # Attempt to unzip
+      unzip -oq QuickNTP.zip
+      unzip_status=$?
+
+      if [ $unzip_status -eq 0 ]; then
+        echo "QuickNTP extraction\033[32m success\033[0m on attempt $attempt_num."
+        quickntp_success=true
+        break # Success, break out of the retry loop
+      else
+        echo "QuickNTP extraction\033[31m failed\033[0m with status $unzip_status on attempt $attempt_num."
+        # Unzip failed, loop continues to retry
+      fi
+    else
+      echo "QuickNTP download\033[31m failed\033[0m (curl status $curl_status or file missing/empty) on attempt $attempt_num."
+      # Download failed, loop continues to retry
+    fi
+  fi
+
+  # If not successful and not the last attempt, wait before retrying
+  if [ "$quickntp_success" = false ] && [ $attempt_num -lt $max_attempts ]; then
+    echo "Retrying in 10 seconds..."
+    sleep 10
+  fi
+
+  attempt_num=$((attempt_num+1))
+done
+
+# Check if QuickNTP download/extraction ultimately failed after retries
+if [ "$quickntp_success" = false ]; then
+  echo "QuickNTP download and extraction failed after $max_attempts attempts."
+  # You might want to add an `exit 1` here if QuickNTP is critical for the script to continue.
+  # Keeping it as just a message for now to match the original behavior.
+fi
+
+# Clean up the zip file if it still exists (it's removed on successful unzip)
+if [ -f QuickNTP.zip ]; then
     rm QuickNTP.zip
 fi
 
