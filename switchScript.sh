@@ -58,8 +58,8 @@ download_github_release() {
 
     # Extract release name and download URL based on asset pattern
     release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    # Use the converted regex pattern in the jq match function
-    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r ".assets[] | select(.name | match(\"$regex_pattern\")) | .browser_download_url")
+    # Use the converted regex pattern in the jq match function, passing it as an argument
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | match($regex)) | .browser_download_url')
 
     if [ -z "$release_name" ]; then
         echo "Warning: Could not extract release name for $repo."
