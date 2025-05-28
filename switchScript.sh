@@ -86,40 +86,44 @@ download_github_release() {
 
     echo "$local_filename download\033[32m success\033[0m."
 
-    # Process the downloaded file (unzip, move, or extract specific file)
-    if [ -n "$target_dir" ]; then # If target_dir is provided, assume it's a zip file to be unzipped
-        echo "Unzipping $local_filename to $target_dir..."
-        if unzip -oq "$local_filename" -d "$target_dir"; then
-             echo "$local_filename extraction\033[32m success\033[0m."
-             # Clean up the downloaded zip file after successful extraction
-             rm "$local_filename"
+    # Determine file type based on extension
+    if [[ "$local_filename" == *.zip ]]; then
+        # Process zip files
+        if [ -n "$target_dir" ]; then # If target_dir is provided, unzip to target_dir
+            echo "Unzipping $local_filename to $target_dir..."
+            if unzip -oq "$local_filename" -d "$target_dir"; then
+                 echo "$local_filename extraction\033[32m success\033[0m."
+                 rm "$local_filename"
+            else
+                 echo "$local_filename extraction\033[31m failed\033[0m."
+                 return 1
+            fi
+        elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
+            echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
+            mkdir -p "$specific_file_dest"
+            if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
+                echo "$specific_file extraction\033[32m success\033[0m."
+                rm "$local_filename"
+            else
+                echo "$specific_file extraction\033[31m failed\033[0m."
+                return 1
+            fi
         else
-             echo "$local_filename extraction\033[31m failed\033[0m."
-             # Optionally, keep the failed zip file for debugging
-             # rm "$local_filename"
-             return 1
+            # Default behavior for zip if no specific extraction/target dir is given (unlikely for this script's usage, but added for completeness)
+            echo "Warning: zip file downloaded but no target directory or specific file extraction specified."
+            echo "File remains as $local_filename. Manual handling might be required."
         fi
-    elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
-        echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
-        # Ensure destination directory exists for specific file extraction
-        mkdir -p "$specific_file_dest"
-        if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
-            echo "$specific_file extraction\033[32m success\033[0m."
-            # Clean up the downloaded zip file after successful extraction
-            rm "$local_filename"
-        else
-            echo "$specific_file extraction\033[31m failed\033[0m."
-            # Optionally, keep the failed zip file for debugging
-            # rm "$local_filename"
-            return 1
+    else
+        # Process non-zip files (like .bin, .nro) - assume direct move is needed
+        local move_target_dir="./bootloader/payloads/" # Default move destination
+        if [ -n "$target_dir" ]; then
+            move_target_dir="$target_dir/" # Use provided target_dir if available
         fi
-    else # Otherwise, assume it's a single file to be moved (default destination ./bootloader/payloads/)
-        echo "Moving $local_filename to ./bootloader/payloads/..."
-        # Ensure destination directory exists for single file move
-        mkdir -p ./bootloader/payloads/
-        if mv "$local_filename" ./bootloader/payloads/; then
+
+        echo "Moving $local_filename to $move_target_dir..."
+        mkdir -p "$move_target_dir" # Ensure target directory exists
+        if mv "$local_filename" "$move_target_dir"; then
             echo "$local_filename move\033[32m success\033[0m."
-            # No need to remove $local_filename here as it was moved
         else
             echo "$local_filename move\033[31m failed\033[0m."
             return 1
