@@ -43,17 +43,23 @@ download_github_release() {
 
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
-    
+
     # Add GitHub API rate limit check
     release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
+    local http_status=$(curl -sL -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo/releases/latest")
     local rate_remaining=$(curl -sL -I "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
 
-    if [[ "$rate_remaining" -lt 5 ]]; then
-        echo "Warning: GitHub API rate limit is low ($rate_remaining remaining)"
+    if [[ "$http_status" -ne 200 ]]; then
+        echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
+        return 1
     fi
 
-    if [ $? -ne 0 ] || ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
-        echo "Error: Failed to fetch release info for $repo\033[31m failed\\033[0m."
+    if [[ "$rate_remaining" -lt 5 ]]; then
+        echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
+    fi
+
+    if ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
+        echo "::error::❌ Invalid JSON response for $repo"
         return 1
     fi
 
@@ -61,12 +67,12 @@ download_github_release() {
     download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | head -n 1)
 
     if [ -z "$release_name" ]; then
-        echo "Warning: Could not extract release name for $repo."
+        echo "::warning::⚠️ Could not extract release name for $repo."
         release_name="Unknown Release"
     fi
 
     if [ -z "$download_url" ]; then
-        echo "Error: Could not find asset matching '$asset_pattern' for $repo\033[31m failed\\033[0m."
+        echo "::error::❌ Could not find asset matching '$asset_pattern' for $repo"
         echo "Available assets:"
         echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.assets[].name'
         return 1
@@ -77,68 +83,61 @@ download_github_release() {
     echo "Downloading $local_filename from $download_url..."
 
     # Download the file
-    curl -sL "$download_url" -o "$local_filename"
-
-    if [ $? -ne 0 ]; then
-        echo "::error::$local_filename download failed."
+    if ! curl -sL -f "$download_url" -o "$local_filename"; then
+        echo "::error::❌ $local_filename download failed (HTTP $?)"
         return 1
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download failed: Downloaded file is missing or empty."
+        echo "::error::❌ $local_filename download failed: Downloaded file is missing or empty"
         return 1
     fi
 
-    echo "::notice::$local_filename download success."
+    echo "::notice::✅ $local_filename download success."
 
-    # Determine file type based on extension
+    # Process the file based on extension
     if [[ "$local_filename" == *.zip ]]; then
-        # Process zip files
-        if [ -n "$target_dir" ]; then # If target_dir is provided, unzip to target_dir
+        if [ -n "$target_dir" ]; then
             echo "Unzipping $local_filename to $target_dir..."
             if unzip -oq "$local_filename" -d "$target_dir"; then
-                echo "::notice::$local_filename extraction success."
+                echo "::notice::✅ $local_filename extraction success"
                 rm "$local_filename"
             else
-                echo "::error::$local_filename extraction failed."
+                echo "::error::❌ $local_filename extraction failed"
                 return 1
             fi
-        elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
+        elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then
             echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
             mkdir -p "$specific_file_dest"
             if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
-                echo "::notice::$specific_file extraction success."
+                echo "::notice::✅ $specific_file extraction success"
                 rm "$local_filename"
             else
-                echo "::error::$specific_file extraction failed."
+                echo "::error::❌ $specific_file extraction failed"
                 return 1
             fi
         else
-            # Default behavior for zip if no specific extraction/target dir is given (unlikely for this script's usage, but added for completeness)
-            echo "Warning: zip file downloaded but no target directory or specific file extraction specified."
-            echo "File remains as $local_filename. Manual handling might be required."
+            echo "::warning::⚠️ No target directory or specific file specified for $local_filename"
         fi
     else
-        # Process non-zip files (like .bin, .nro) - assume direct move is needed
-        local move_target_dir="./bootloader/payloads/" # Default move destination
+        local move_target_dir="./bootloader/payloads/"
         if [ -n "$target_dir" ]; then
-            move_target_dir="$target_dir/" # Use provided target_dir if available
+            move_target_dir="$target_dir/"
         fi
 
         echo "Moving $local_filename to $move_target_dir..."
-        mkdir -p "$move_target_dir" # Ensure target directory exists
+        mkdir -p "$move_target_dir"
         if mv "$local_filename" "$move_target_dir"; then
-            echo "::notice::$local_filename move success."
+            echo "::notice::✅ $local_filename move success"
         else
-            echo "::error::$local_filename move failed."
+            echo "::error::❌ $local_filename move failed"
             return 1
         fi
     fi
 
     echo "--- Finished processing $repo ---"
-    echo "" # Add a blank line for better readability
-
-    return 0 # Indicate success
+    echo ""
+    return 0
 }
 
 # Function to download a single file from a direct URL
@@ -158,25 +157,25 @@ download_direct_file() {
     curl -sL "$url" -o "$local_filename"
 
     if [ $? -ne 0 ]; then
-        echo "::error::$local_filename download failed."
+        echo "::error::❌ $local_filename download failed"
         return 1
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download failed: Downloaded file is missing or empty."
+        echo "::error::❌ $local_filename download failed: Downloaded file is missing or empty"
         return 1
     fi
 
-    echo "::notice::$local_filename download success."
+    echo "::notice::✅$local_filename download success."
 
     # Add a check to skip moving if target_dir is the current directory
     if [ -n "$target_dir" ] && [ "$target_dir" != "." ] && [ "$target_dir" != "./" ]; then
         echo "Moving $local_filename to $target_dir..."
         mkdir -p "$target_dir" # Ensure target directory exists
         if mv "$local_filename" "$target_dir/"; then
-            echo "::notice::$local_filename move success."
+            echo "::notice::✅$local_filename move success."
         else
-            echo "::error::$local_filename move failed."
+            echo "::error::❌ $local_filename move failed"
             return 1
         fi
     elif [ -n "$target_dir" ]; then
@@ -293,18 +292,213 @@ download_github_release "zdm65477730/nx-ovlloader" "*.zip" "nx-ovlloader.zip" ".
 # Assuming it extracts to the current directory (./SwitchSD) like nx-ovlloader
 download_github_release "zdm65477730/QuickNTP" "*.zip" "QuickNTP.zip" "./" "QuickNTP" || { echo "QuickNTP processing failed. Exiting."; exit 1; }
 
-# Write config.ini in /config/tesla
-echo "Writing config.ini in ./config/tesla..."
-cat > ./config/tesla/config.ini << ENDOFFILE
-[tesla]
-; 特斯拉自定义快捷键。
-key_combo=L+ZL+R
-ENDOFFILE
-if [ $? -ne 0 ]; then
-    echo "Writing config.ini in ./config/tesla failed."
-else
-    echo "Writing config.ini in ./config/tesla success."
-fi
+# 在现有下载调用之后，添加以下内容：
 
-echo ""
-echo "::notice::✅ Your Switch SD card is prepared!"
+# ======================
+# 新增功能模块下载
+# ======================
+
+# 1. 超频相关组件
+download_github_release "halop/OC_Toolkit_SC_EOS" "kip.zip" "kip.zip" "" "kip" "loader.kip" "./atmosphere/kips" || { echo "::error::❌ kip processing failed"; exit 1; }
+download_github_release "halop/OC_Toolkit_SC_EOS" "OC.Toolkit.zip" "OC.Toolkit.zip" "./switch/.packages" "OC Toolkit" || { echo "::error::❌ OC Toolkit processing failed"; exit 1; }
+download_github_release "halop/OC_Toolkit_SC_EOS" "sys-clk.zip" "sys-clk.zip" "./" "sys-clk" || { echo "::error::❌ sys-clk processing failed"; exit 1; }
+
+# 2. 特斯拉插件系统
+download_github_release "ppkantorski/Ultrahand-Overlay" "ovlmenu.ovl" "ovlmenu.ovl" "./switch/.overlays" "Ultrahand" || { echo "::error::❌ Ultrahand menu failed"; exit 1; }
+download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" "./config/ultrahand/lang" "Ultrahand Lang" || { echo "::error::❌ Language pack failed"; exit 1; }
+
+# 3. 系统工具插件
+download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
+download_github_release "zdm65477730/ovl-sysmodules" "*.zip" "ovl-sysmodules.zip" "./" "ovl-sysmodules" || { echo "::error::❌ ovl-sysmodules failed"; exit 1; }
+download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
+download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
+download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
+download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "MasterVolume" || { echo "::error::❌ MasterVolume failed"; exit 1; }
+
+# ======================
+# 新增配置文件生成
+# ======================
+
+# 1. overlays.ini (特斯拉插件配置)
+cat > ./config/ultrahand/overlays.ini << 'ENDOFFILE'
+[sys-patch-overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统补丁
+custom_version=
+
+[sys-clk-overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统超频
+custom_version=
+
+[FPSLocker.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=FPS补丁
+custom_version=
+
+[EdiZon.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=金手指
+custom_version=
+
+[ovl-sysmodules.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=系统模块
+custom_version=
+
+[QuickNTP.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=时间校准
+custom_version=
+
+[Status-Monitor-Overlay.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=状态监视
+custom_version=
+
+[ReverseNX-RT.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=底座模式
+custom_version=
+
+[MasterVolume.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=音量调节
+custom_version=
+
+[ldn_mitm.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=联机补丁
+custom_version=
+
+[Fizeau.ovl]
+priority=20
+star=false
+hide=false
+use_launch_args=false
+launch_args=
+custom_name=色彩调节
+custom_version=
+ENDOFFILE
+
+# 2. exosphere.ini (隐身模式)
+cat > ./exosphere.ini << 'ENDOFFILE'
+[exosphere]
+debugmode=1
+debugmode_user=0
+disable_user_exception_handlers=0
+enable_user_pmu_access=0
+blank_prodinfo_sysmmc=1
+blank_prodinfo_emummc=1
+allow_writing_to_cal_sysmmc=0
+log_port=0
+log_baud_rate=115200
+log_inverted=0
+ENDOFFILE
+
+# 3. hekate_ipl.ini (启动项配置)
+cat > ./bootloader/hekate_ipl.ini << 'ENDOFFILE'
+[config]
+autoboot=0
+autoboot_list=0
+bootwait=3
+backlight=100
+noticker=0
+autohosoff=1
+autonogc=1
+updater2p=0
+bootprotect=0
+
+[Fusee]
+icon=bootloader/res/icon_ams.bmp
+payload=bootloader/payloads/fusee.bin
+
+[CFW (emuMMC)]
+emummcforce=1
+fss0=atmosphere/package3
+atmosphere=1
+icon=bootloader/res/icon_Atmosphere_emunand.bmp
+id=cfw-emu
+kip1=atmosphere/kips/loader.kip
+
+[CFW (sysMMC)]
+emummc_force_disable=1
+fss0=atmosphere/package3
+atmosphere=1
+icon=bootloader/res/icon_Atmosphere_sysnand.bmp
+id=cfw-sys
+kip1=atmosphere/kips/loader.kip
+
+[Stock SysNAND]
+emummc_force_disable=1
+fss0=atmosphere/package3
+icon=bootloader/res/icon_stock.bmp
+stock=1
+id=ofw-sys
+ENDOFFILE
+
+# 4. 系统配置文件
+cat > ./atmosphere/config/system_settings.ini << 'ENDOFFILE'
+[eupld]
+upload_enabled = u8!0x0
+
+[ro]
+ease_nro_restriction = u8!0x1
+
+[atmosphere]
+dmnt_cheats_enabled_by_default = u8!0x0
+dmnt_always_save_cheat_toggles = u8!0x1
+fatal_auto_reboot_interval = u64!0x2710
+enable_dns_mitm = u8!0x1
+add_defaults_to_dns_hosts = u8!0x1
+enable_external_bluetooth_db = u8!0x1
+
+[usb]
+usb30_force_enabled = u8!0x1
+
+[tc]
+sleep_enabled = u8!0x0
+holdable_tskin = u32!0xEA60
+tskin_rate_table_console = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51], [42000, 48000, 51, 102], [48000, 55000, 102, 153], [55000, 60000, 153, 255], [60000, 68000, 255, 255]]"
+tskin_rate_table_handheld = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51], [42000, 48000, 51, 102], [48000, 55000, 102, 153], [55000, 60000, 153, 255], [60000, 68000, 255, 255]]"
+ENDOFFILE
