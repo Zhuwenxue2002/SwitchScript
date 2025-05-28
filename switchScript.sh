@@ -8,6 +8,19 @@ set -e
 
 # -------------------------------------------
 
+# Function to convert a glob pattern to a regex pattern for jq
+glob_to_regex() {
+    local glob="$1"
+    local regex="$glob"
+    # Escape dots
+    regex=$(echo "$regex" | sed 's/\./\\./g')
+    # Convert * to .*
+    regex=$(echo "$regex" | sed 's/\*/.*/g')
+    # Add anchors to match the whole string
+    regex="^$regex$"
+    echo "$regex"
+}
+
 # Function to download and process a GitHub Release asset
 # Arguments:
 # $1: Repository name (e.g., Atmosphere-NX/Atmosphere)
@@ -26,6 +39,9 @@ download_github_release() {
     local specific_file="$6"
     local specific_file_dest="$7"
 
+    # Convert glob pattern to regex for jq
+    local regex_pattern=$(glob_to_regex "$asset_pattern")
+
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
     release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
@@ -42,7 +58,8 @@ download_github_release() {
 
     # Extract release name and download URL based on asset pattern
     release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r ".assets[] | select(.name | match(\"$asset_pattern\")) | .browser_download_url")
+    # Use the converted regex pattern in the jq match function
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r ".assets[] | select(.name | match(\"$regex_pattern\")) | .browser_download_url")
 
     if [ -z "$release_name" ]; then
         echo "Warning: Could not extract release name for $repo."
