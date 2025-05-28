@@ -11,7 +11,7 @@ set -e
 # Function to download and process a GitHub Release asset
 # Arguments:
 # $1: Repository name (e.g., Atmosphere-NX/Atmosphere)
-# $2: Asset file pattern to download (e.g., '*.zip', 'fusee.bin') - can be a regex pattern
+# $2: Asset file pattern to download (e.g., '*.zip', 'fusee.bin') - treated as a glob pattern to be converted to regex
 # $3: Local filename to save the downloaded asset
 # $4: Target directory for unzipped contents (optional, if not a zip, pass empty string)
 # $5: Name to include in description.txt (optional, defaults to repo name)
@@ -19,7 +19,7 @@ set -e
 # $7: Destination directory for the extracted file (optional, used with $6)
 download_github_release() {
     local repo="$1"
-    local asset_pattern="$2"
+    local asset_pattern="$2" # This is a glob pattern
     local local_filename="$3"
     local target_dir="$4"
     local description_name="${5:-$repo}" # Default to repo name if not provided
@@ -28,34 +28,32 @@ download_github_release() {
 
     echo "--- Processing GitHub Release: $repo ---"
     echo "Fetching latest release info for $repo..."
-    # Use curl to fetch raw data, pipe through tr to remove problematic control characters,
-    # then pipe to jq to extract the required fields.
-    # We capture the entire output of the jq command into a variable.
-    # jq will output null or empty strings if fields are not found or parsing fails.
+
+    # Convert shell glob pattern to a basic regex pattern for jq match()
+    # Escape dots, replace * with .*, replace ? with .
+    local regex_pattern=$(echo "$asset_pattern" | sed -e 's/\./\\./g' -e 's/\*/.*/g' -e 's/\?/\./g')
 
     # Construct the jq filter to extract name/tag_name and the desired asset URL
+    # Pass the converted regex pattern to jq using --arg
     local jq_filter='
     . as $release |
     ($release.name // $release.tag_name) as $release_name |
-    ($release.assets[] | select(.name | match("'"$asset_pattern"'")) | .browser_download_url) as $download_url |
+    ($release.assets[] | select(.name | match($asset_regex)) | .browser_download_url) as $download_url |
     {release_name: $release_name, download_url: $download_url} | tojson
     '
 
     # Execute the pipeline: curl -> tr -> jq, and capture the output
-    # We are relying on jq to handle the JSON parsing. If it fails due to invalid chars,
-    # the command substitution will likely still capture some output or be empty/fail.
-    # We will check the exit status of the pipeline as the primary indicator of success/failure.
+    # tr removes problematic control characters.
     local processed_info_json=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | \
                                  tr -cd '[:print:][:space:]' | \
-                                 jq -c --arg asset_pattern "$asset_pattern" "$jq_filter") # Use -c for compact output
+                                 jq -c --arg asset_regex "$regex_pattern" "$jq_filter") # Pass regex_pattern as --arg
 
     local pipeline_status=$? # Capture the exit status of the pipeline
 
     # Check the pipeline's exit status
     if [ $pipeline_status -ne 0 ]; then
         echo "Error: Failed to fetch or process release info for $repo (Pipeline exit status $pipeline_status).\\033[31m failed\\\\033[0m." >&2
-        # We don't have the problematic raw output easily accessible here without re-fetching,
-        # but the jq error message should have been printed to stderr.
+        # jq error message (Regex failure) should be printed to stderr by jq itself.
         return 1
     fi
 
@@ -64,13 +62,15 @@ download_github_release() {
     release_name=$(echo "$processed_info_json" | jq -r '.release_name // "Unknown Release"') # Default to Unknown Release if null
     download_url=$(echo "$processed_info_json" | jq -r '.download_url')
 
-
+    # Additional check in case jq succeeded but didn't find the asset (download_url is null or empty)
     if [ -z "$download_url" ] || [ "$download_url" == "null" ]; then # Check for empty string or jq null output
         echo "Error: Could not find asset matching '$asset_pattern' for $repo.\\033[31m failed\\\\033[0m."
-        # We could try to print available assets here, but that requires another jq call on potentially large JSON.
-        # For simplicity in this revised approach, we skip printing all assets on failure.
+        # Maybe try to print available assets here for debugging?
+        # echo "Available assets:"
+        # curl -sL "https://api.github.com/repos/$repo/releases/latest" | tr -cd '[:print:][:space:]' | jq -r '.assets[].name'
         return 1
     fi
+
 
     # Add release name to description.txt
     echo "$description_name $release_name" >> ../description.txt
@@ -107,14 +107,15 @@ download_github_release() {
         # Ensure destination directory exists for specific file extraction
         mkdir -p "$specific_file_dest"
         if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
-            echo "$specific_file extraction\\033[32m success\\033[0m.\"\n        else
-            echo "$specific_file extraction\\033[31m failed\\033[0m.\"\n            # Optionally, keep the failed zip file for debugging
+            echo "$specific_file extraction\\033[32m success\\033[0m."
+        else
+            echo "$specific_file extraction\\033[31m failed\\033[0m."
+            # Optionally, keep the failed zip file for debugging
             # rm "$local_filename"
             return 1
         fi
     else # Otherwise, assume it\'s a single file to be moved (default destination ./bootloader/payloads/)
-        echo "Moving $local_filename to ./bootloader/payloads/..."
-        # Ensure destination directory exists for single file move
+        echo "Moving $local_filename to ./bootloader/payloads/...\"\n        # Ensure destination directory exists for single file move
         mkdir -p ./bootloader/payloads/
         if mv "$local_filename" ./bootloader/payloads/; then
             echo "$local_filename move\\033[32m success\\033[0m.\"\n        else
