@@ -21,7 +21,7 @@ glob_to_regex() {
     echo "$regex"
 }
 
-# 下载并处理 GitHub Release 资源的函数（优化版）
+# 下载并处理 GitHub Release 资源的函数（完整优化版）
 # 参数：
 # $1: 仓库名称（例如 Atmosphere-NX/Atmosphere）
 # $2: 要下载的资源文件模式（例如 '*.zip'、'fusee.bin'）- 可以是正则表达式模式
@@ -39,13 +39,20 @@ download_github_release() {
     local specific_file="$6"
     local specific_file_dest="$7"
 
-    # Convert glob pattern to regex for jq
+    # 将 glob 模式转换为 jq 使用的正则表达式
+    glob_to_regex() {
+        local glob="$1"
+        local regex="$glob"
+        regex=$(echo "$regex" | sed 's/\./\\./g; s/\[/\\[/g; s/\]/\\]/g; s/\^/\\^/g; s/\$/\\$/g')
+        regex=$(echo "$regex" | sed 's/\*/.*/g; s/\?/./g')
+        echo "^${regex}$"
+    }
     local regex_pattern=$(glob_to_regex "$asset_pattern")
 
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # 单次 GitHub API 请求（优化点）
+    # 单次 GitHub API 请求（获取完整响应）
     response=$(curl -sL -i -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         "https://api.github.com/repos/$repo/releases/latest")
@@ -58,13 +65,13 @@ download_github_release() {
     release_info=$(echo "$response" | awk '/^{/,0')
 
     # 检查 HTTP 状态码
-    if [[ "$http_status" -ne 200 ]]; then
+    if [ "$http_status" -ne 200 ]; then
         echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
         return 1
     fi
 
     # 检查 API 速率限制
-    if [[ "$rate_remaining" -lt 5 ]]; then
+    if [ "$rate_remaining" -lt 5 ]; then
         echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
     fi
 
@@ -112,7 +119,10 @@ download_github_release() {
     # 处理下载的文件（解压/移动）
     if [[ "$local_filename" == *.zip ]]; then
         if [ -n "$target_dir" ]; then
+            # 规范化目标路径
+            target_dir=$(realpath -m "$target_dir")
             echo "Unzipping $local_filename to $target_dir..."
+            mkdir -p "$target_dir"
             if unzip -oq "$local_filename" -d "$target_dir"; then
                 echo "::notice::✅ $local_filename extraction success"
                 rm "$local_filename"
@@ -121,6 +131,8 @@ download_github_release() {
                 return 1
             fi
         elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then
+            # 提取 ZIP 中的特定文件
+            specific_file_dest=$(realpath -m "$specific_file_dest")
             echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
             mkdir -p "$specific_file_dest"
             if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
@@ -132,16 +144,25 @@ download_github_release() {
             fi
         fi
     else
+        # 非 ZIP 文件的移动逻辑
         local move_target_dir="./bootloader/payloads/"
         [ -n "$target_dir" ] && move_target_dir="$target_dir/"
+        move_target_dir=$(realpath -m "$move_target_dir")
 
-        echo "Moving $local_filename to $move_target_dir..."
-        mkdir -p "$move_target_dir"
-        if mv "$local_filename" "$move_target_dir"; then
-            echo "::notice::✅ $local_filename move success"
+        # 检查源路径和目标路径是否不同
+        local src_path=$(realpath -m "$local_filename")
+        local dest_path="$move_target_dir/$(basename "$local_filename")"
+        if [ "$src_path" != "$dest_path" ]; then
+            echo "Moving $local_filename to $move_target_dir..."
+            mkdir -p "$move_target_dir"
+            if mv "$local_filename" "$move_target_dir"; then
+                echo "::notice::✅ $local_filename move success"
+            else
+                echo "::error::❌ $local_filename move failed"
+                return 1
+            fi
         else
-            echo "::error::❌ $local_filename move failed"
-            return 1
+            echo "::notice::✅ $local_filename already in target directory ($move_target_dir)."
         fi
     fi
 
