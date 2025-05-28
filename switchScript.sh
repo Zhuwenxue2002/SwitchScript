@@ -91,6 +91,8 @@ download_github_release() {
         echo "Unzipping $local_filename to $target_dir..."
         if unzip -oq "$local_filename" -d "$target_dir"; then
              echo "$local_filename extraction\033[32m success\033[0m."
+             # Clean up the downloaded zip file after successful extraction
+             rm "$local_filename"
         else
              echo "$local_filename extraction\033[31m failed\033[0m."
              # Optionally, keep the failed zip file for debugging
@@ -103,6 +105,8 @@ download_github_release() {
         mkdir -p "$specific_file_dest"
         if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
             echo "$specific_file extraction\033[32m success\033[0m."
+            # Clean up the downloaded zip file after successful extraction
+            rm "$local_filename"
         else
             echo "$specific_file extraction\033[31m failed\033[0m."
             # Optionally, keep the failed zip file for debugging
@@ -115,15 +119,11 @@ download_github_release() {
         mkdir -p ./bootloader/payloads/
         if mv "$local_filename" ./bootloader/payloads/; then
             echo "$local_filename move\033[32m success\033[0m."
+            # No need to remove $local_filename here as it was moved
         else
             echo "$local_filename move\033[31m failed\033[0m."
             return 1
         fi
-    fi
-
-    # Clean up the downloaded file unless it was a specific file extraction
-    if [ -z "$specific_file" ] || [ -z "$specific_file_dest" ]; then
-        rm "$local_filename"
     fi
 
     echo "--- Finished processing $repo ---"
@@ -160,7 +160,8 @@ download_direct_file() {
 
     echo "$local_filename download\033[32m success\033[0m."
 
-    if [ -n "$target_dir" ]; then
+    # Add a check to skip moving if target_dir is the current directory
+    if [ -n "$target_dir" ] && [ "$target_dir" != "." ] && [ "$target_dir" != "./" ]; then
         echo "Moving $local_filename to $target_dir..."
         mkdir -p "$target_dir" # Ensure target directory exists
         if mv "$local_filename" "$target_dir/"; then
@@ -169,6 +170,9 @@ download_direct_file() {
             echo "$local_filename move\033[31m failed\033[0m."
             return 1
         fi
+    elif [ -n "$target_dir" ]; then
+        # If target_dir is provided but is '.' or './', confirm file is in place
+        echo "File $local_filename already downloaded to the target directory ($target_dir)."
     fi
 
     if [ -n "$description_name" ]; then
