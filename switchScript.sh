@@ -229,6 +229,18 @@ cd SwitchSD
 
 # Now replace the existing download blocks with calls to the functions
 
+# 下载logo.zip
+download_direct_file "https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/theme/logo.zip" "logo.zip" "./" "logo" || exit 1
+
+# 新增：解压并清理
+if [ -f "logo.zip" ]; then
+    unzip -oq logo.zip && rm logo.zip || {
+        echo "::error::❌ Failed to unzip logo.zip"
+        exit 1
+    }
+    echo "::notice::✅ logo.zip extracted and removed"
+fi
+
 # Fetch latest atmosphere
 download_github_release "Atmosphere-NX/Atmosphere" "*.zip" "atmosphere.zip" "./" "Atmosphere" || { echo "Atmosphere processing failed. Exiting."; exit 1; }
 
@@ -237,9 +249,6 @@ download_github_release "Atmosphere-NX/Atmosphere" "fusee.bin" "fusee.bin" "" "f
 
 # Fetch latest hekate (EasyWorld大佬的汉化版本)
 download_github_release "easyworld/hekate" "*_sc.zip" "hekate.zip" "./" "Hekate + Nyx" || { echo "Hekate + Nyx processing failed. Exiting."; exit 1; }
-
-# Fetch logo (direct download)
-download_direct_file "https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/theme/logo.zip" "logo.zip" "./" "logo" || { echo "logo processing failed. Exiting."; exit 1; }
 
 # Fetch latest Lockpick_RCM
 # This one requires extracting a specific .bin file from the zip
@@ -322,11 +331,20 @@ download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" ".
 # 3. 系统工具插件
 download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
 download_github_release "zdm65477730/ovl-sysmodules" "*.zip" "ovl-sysmodules.zip" "./" "ovl-sysmodules" || { echo "::error::❌ ovl-sysmodules failed"; exit 1; }
-download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
 download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
 download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "MasterVolume" || { echo "::error::❌ MasterVolume failed"; exit 1; }
 
+download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
+# 解压并清理
+if [ -f "Status-Monitor-Overlay.zip" ]; then
+    unzip -oq Status-Monitor-Overlay.zip -d ./config/ultrahand/ && \
+    rm Status-Monitor-Overlay.zip || {
+        echo "::error::❌ Failed to process Status-Monitor-Overlay"
+        exit 1
+    }
+    echo "::notice::✅ Status-Monitor-Overlay installed"
+fi
 # ======================
 # 新增配置文件生成
 # ======================
@@ -489,7 +507,27 @@ stock=1
 id=ofw-sys
 ENDOFFILE
 
+### Rename hekate_ctcaer_*.bin to payload.bin
+found_files=$(find . -name "hekate_ctcaer_*.bin" -print -quit)
+if [ -n "$found_files" ]; then
+    if mv "$found_files" ./payload.bin; then
+        echo "::notice::✅ Renamed hekate_ctcaer_*.bin to payload.bin"
+    else
+        echo "::error::❌ Failed to rename hekate_ctcaer_*.bin"
+        exit 1
+    fi
+else
+    echo "::warning::⚠️ No hekate_ctcaer_*.bin found to rename"
+fi
+
+# 生成 boot.ini 文件
+cat > ./boot.ini << 'ENDOFFILE'
+[payload]
+file=payload.bin
+ENDOFFILE
+
 # 4. 系统配置文件
+# system_settings.ini
 cat > ./atmosphere/config/system_settings.ini << 'ENDOFFILE'
 [eupld]
 upload_enabled = u8!0x0
@@ -515,12 +553,17 @@ tskin_rate_table_console = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51],
 tskin_rate_table_handheld = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51], [42000, 48000, 51, 102], [48000, 55000, 102, 153], [55000, 60000, 153, 255], [60000, 68000, 255, 255]]"
 ENDOFFILE
 
+# override_config.ini 
+cat > ./atmosphere/config/override_config.ini << 'ENDOFFILE'
+[hbl_config]
+program_id_0=010000000000100D
+override_address_space=39_bit
+; 按住R键点击相册进入HBL自制软件界面
+override_key_0=R
+ENDOFFILE
+
 # 5. host文件生成
-
-# 创建hosts文件目录
 mkdir -p ./atmosphere/hosts
-
-# 生成emummc.txt
 cat > ./atmosphere/hosts/emummc.txt << 'ENDOFFILE'
 127.0.0.1 *nintendo.*
 127.0.0.1 *nintendo-europe.com
@@ -537,6 +580,11 @@ cat > ./atmosphere/hosts/emummc.txt << 'ENDOFFILE'
 95.216.149.205 *ctest.cdn.nintendo.net
 95.216.149.205 *90dns.test
 ENDOFFILE
-
-# 复制为sysmmc.txt
 cp ./atmosphere/hosts/emummc.txt ./atmosphere/hosts/sysmmc.txt
+
+### 删除大气层多余的nro插件
+rm -f switch/haze.nro
+rm -f switch/reboot_to_hekate.nro
+rm -f switch/reboot_to_payload.nro
+
+echo "\033[32mYour Switch SD card is prepared!\033[0m"
