@@ -80,16 +80,16 @@ download_github_release() {
     curl -sL "$download_url" -o "$local_filename"
 
     if [ $? -ne 0 ]; then
-        echo "$local_filename download\033[31m failed\\033[0m."
+        echo "::error::$local_filename download failed."
         return 1
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download\033[31m failed\033[0m: Downloaded file is missing or empty."
+        echo "$local_filename download failed: Downloaded file is missing or empty."
         return 1
     fi
 
-    echo "$local_filename download\033[32m success\033[0m."
+    echo "::notice::$local_filename download success."
 
     # Determine file type based on extension
     if [[ "$local_filename" == *.zip ]]; then
@@ -97,20 +97,20 @@ download_github_release() {
         if [ -n "$target_dir" ]; then # If target_dir is provided, unzip to target_dir
             echo "Unzipping $local_filename to $target_dir..."
             if unzip -oq "$local_filename" -d "$target_dir"; then
-                 echo "$local_filename extraction\033[32m success\033[0m."
-                 rm "$local_filename"
+                echo "::notice::$local_filename extraction success."
+                rm "$local_filename"
             else
-                 echo "$local_filename extraction\033[31m failed\033[0m."
-                 return 1
+                echo "::error::$local_filename extraction failed."
+                return 1
             fi
         elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
             echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
             mkdir -p "$specific_file_dest"
             if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
-                echo "$specific_file extraction\033[32m success\033[0m."
+                echo "::notice::$specific_file extraction success."
                 rm "$local_filename"
             else
-                echo "$specific_file extraction\033[31m failed\033[0m."
+                echo "::error::$specific_file extraction failed."
                 return 1
             fi
         else
@@ -128,9 +128,9 @@ download_github_release() {
         echo "Moving $local_filename to $move_target_dir..."
         mkdir -p "$move_target_dir" # Ensure target directory exists
         if mv "$local_filename" "$move_target_dir"; then
-            echo "$local_filename move\033[32m success\033[0m."
+            echo "::notice::$local_filename move success."
         else
-            echo "$local_filename move\033[31m failed\033[0m."
+            echo "::error::$local_filename move failed."
             return 1
         fi
     fi
@@ -158,25 +158,25 @@ download_direct_file() {
     curl -sL "$url" -o "$local_filename"
 
     if [ $? -ne 0 ]; then
-        echo "$local_filename download\033[31m failed\\033[0m."
+        echo "::error::$local_filename download failed."
         return 1
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download\033[31m failed\033[0m: Downloaded file is missing or empty."
+        echo "$local_filename download failed: Downloaded file is missing or empty."
         return 1
     fi
 
-    echo "$local_filename download\033[32m success\033[0m."
+    echo "::notice::$local_filename download success."
 
     # Add a check to skip moving if target_dir is the current directory
     if [ -n "$target_dir" ] && [ "$target_dir" != "." ] && [ "$target_dir" != "./" ]; then
         echo "Moving $local_filename to $target_dir..."
         mkdir -p "$target_dir" # Ensure target directory exists
         if mv "$local_filename" "$target_dir/"; then
-            echo "$local_filename move\033[32m success\033[0m."
+            echo "::notice::$local_filename move success."
         else
-            echo "$local_filename move\033[31m failed\033[0m."
+            echo "::error::$local_filename move failed."
             return 1
         fi
     elif [ -n "$target_dir" ]; then
@@ -301,10 +301,10 @@ cat > ./config/tesla/config.ini << ENDOFFILE
 key_combo=L+ZL+R
 ENDOFFILE
 if [ $? -ne 0 ]; then
-    echo "Writing config.ini in ./config/tesla\033[31m failed\\033[0m."
+    echo "Writing config.ini in ./config/tesla failed."
 else
-    echo "Writing config.ini in ./config/tesla\033[32m success\033[0m."
+    echo "Writing config.ini in ./config/tesla success."
 fi
 
 echo ""
-echo "\033[32mYour Switch SD card is prepared!\033[0m"
+echo "::notice::✅ Your Switch SD card is prepared!"

@@ -27,7 +27,6 @@ jobs:
 
     - name: Initialization environment
       env:
-        TERM: xterm-256color  # 启用 ANSI 颜色支持
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo -E apt install -y jq
