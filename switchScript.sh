@@ -1,13 +1,14 @@
+#!/bin/sh
 set -e
 
-### Credit to the Authors at https://rentry.org/CFWGuides
-### Script created by Fraxalotl
-### Mod by huangqian8
-### Mod by xiaobai
+### 感谢 https://rentry.org/CFWGuides 的作者
+### 脚本由 Fraxalotl 创建
+### 由 huangqian8 修改
+### 由 xiaobai 修改
 
 # -------------------------------------------
 
-# Function to convert a glob pattern to a regex pattern for jq
+# 将 glob 模式转换为 jq 使用的正则表达式模式的函数
 glob_to_regex() {
     local glob="$1"
     local regex="$glob"
@@ -20,15 +21,15 @@ glob_to_regex() {
     echo "$regex"
 }
 
-# Function to download and process a GitHub Release asset
-# Arguments:
-# $1: Repository name (e.g., Atmosphere-NX/Atmosphere)
-# $2: Asset file pattern to download (e.g., '*.zip', 'fusee.bin') - can be a regex pattern
-# $3: Local filename to save the downloaded asset
-# $4: Target directory for unzipped contents (optional, if not a zip, pass empty string)
-# $5: Name to include in description.txt (optional, defaults to repo name)
-# $6: Specific file name to extract from zip (optional, for extracting a single file like .nro or .bin)
-# $7: Destination directory for the extracted file (optional, used with $6)
+# 下载并处理 GitHub Release 资源的函数
+# 参数：
+# $1: 仓库名称（例如 Atmosphere-NX/Atmosphere）
+# $2: 要下载的资源文件模式（例如 '*.zip'、'fusee.bin'）- 可以是正则表达式模式
+# $3: 保存下载资源的本地文件名
+# $4: 解压内容的目标目录（可选，如果不是 zip 文件，传空字符串）
+# $5: 包含在 description.txt 中的名称（可选，默认为仓库名称）
+# $6: 从 zip 中提取的特定文件名（可选，用于提取单个文件如 .nro 或 .bin）
+# $7: 提取文件的目标目录（可选，与 $6 一起使用）
 download_github_release() {
     local repo="$1"
     local asset_pattern="$2"
@@ -43,40 +44,6 @@ download_github_release() {
 
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
-
-    # Add GitHub API rate limit check
-    release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
-    local http_status=$(curl -sL -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo/releases/latest")
-    local rate_remaining=$(curl -sL -I "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
-
-    if [[ "$http_status" -ne 200 ]]; then
-        echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
-        return 1
-    fi
-
-    if [[ "$rate_remaining" -lt 5 ]]; then
-        echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
-    fi
-
-    if ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
-        echo "::error::❌ Invalid JSON response for $repo"
-        return 1
-    fi
-
-    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name')
-    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | head -n 1)
-
-    if [ -z "$release_name" ]; then
-        echo "::warning::⚠️ Could not extract release name for $repo."
-        release_name="Unknown Release"
-    fi
-
-    if [ -z "$download_url" ]; then
-        echo "::error::❌ Could not find asset matching '$asset_pattern' for $repo"
-        echo "Available assets:"
-        echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.assets[].name'
-        return 1
-    fi
 
     # Add release name to description.txt
     echo "$description_name $release_name" >> ../description.txt
@@ -95,7 +62,7 @@ download_github_release() {
 
     echo "::notice::✅ $local_filename download success."
 
-    # Process the file based on extension
+    # 根据文件扩展名处理文件
     if [[ "$local_filename" == *.zip ]]; then
         if [ -n "$target_dir" ]; then
             echo "Unzipping $local_filename to $target_dir..."
@@ -140,12 +107,12 @@ download_github_release() {
     return 0
 }
 
-# Function to download a single file from a direct URL
-# Arguments:
-# $1: Download URL
-# $2: Local filename to save
-# $3: Target directory to move after download (optional)
-# $4: Name to include in description.txt (optional)
+# 从直接 URL 下载单个文件的函数
+# 参数：
+# $1: 下载 URL
+# $2: 保存的本地文件名
+# $3: 下载后移动的目标目录（可选）
+# $4: 包含在 description.txt 中的名称（可选）
 download_direct_file() {
     local url="$1"
     local local_filename="$2"
@@ -184,6 +151,7 @@ download_direct_file() {
     fi
 
     if [ -n "$description_name" ]; then
+
          # Attempt to extract filename from URL for description if description_name is provided but no explicit name
          local base_filename=$(basename "$url")
          echo "$description_name $base_filename" >> ../description.txt
@@ -197,7 +165,7 @@ download_direct_file() {
 
 # -------------------------------------------
 
-### Create a new folder for storing files
+# 创建新文件夹用于存储文件
 if [ -d SwitchSD ]; then
   rm -rf SwitchSD
 fi
@@ -244,7 +212,7 @@ download_github_release "meganukebmp/Switch_90DNS_tester" "*.nro" "Switch_90DNS_
 download_github_release "rashevskyv/dbi" "*.nro" "DBI.nro" "./switch/DBI" "DBI" || { echo "DBI processing failed. Exiting."; exit 1; }
 
 # Fetch latest Awoo Installer (downloads a .zip)
-download_github_release "dragonflylee/Awoo-Installer" "*.zip" "Awoo-Installer.zip" "./" "Awoo Installer" || { echo "Awoo Installer processing failed. Exiting."; exit 1; }
+download_github_release "dragonflylee/胜Awoo-Installer" "*.zip" "Awoo-Installer.zip" "./" "Awoo Installer" || { echo "Awoo Installer processing failed. Exiting."; exit 1; }
 
 # Fetch latest Hekate-toolbox (downloads a .nro)
 download_github_release "WerWolv/Hekate-Toolbox" "*.nro" "HekateToolbox.nro" "./switch/HekateToolbox" "HekateToolbox" || { echo "HekateToolbox processing failed. Exiting."; exit 1; }
@@ -502,3 +470,29 @@ holdable_tskin = u32!0xEA60
 tskin_rate_table_console = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51], [42000, 48000, 51, 102], [48000, 55000, 102, 153], [55000, 60000, 153, 255], [60000, 68000, 255, 255]]"
 tskin_rate_table_handheld = str!"[[-1000000, 28000, 0, 0], [28000, 42000, 0, 51], [42000, 48000, 51, 102], [48000, 55000, 102, 153], [55000, 60000, 153, 255], [60000, 68000, 255, 255]]"
 ENDOFFILE
+
+# 5. host文件生成
+
+# 创建hosts文件目录
+mkdir -p ./atmosphere/hosts
+
+# 生成emummc.txt
+cat > ./atmosphere/hosts/emummc.txt << 'ENDOFFILE'
+127.0.0.1 *nintendo.*
+127.0.0.1 *nintendo-europe.com
+127.0.0.1 *nintendoswitch.*
+127.0.0.1 ads.doubleclick.net
+127.0.0.1 s.ytimg.com
+127.0.0.1 ad.youtube.com
+127.0.0.1 ads.youtube.com
+127.0.0.1 clients1.google.com
+207.246.121.77 *conntest.nintendowifi.net
+207.246.121.77 *ctest.cdn.nintendo.net
+69.25.139.140 *ctest.cdn.n.nintendoswitch.cn
+95.216.149.205 *conntest.nintendowifi.net
+95.216.149.205 *ctest.cdn.nintendo.net
+95.216.149.205 *90dns.test
+ENDOFFILE
+
+# 复制为sysmmc.txt
+cp ./atmosphere/hosts/emummc.txt ./atmosphere/hosts/sysmmc.txt
