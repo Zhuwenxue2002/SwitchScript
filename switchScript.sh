@@ -44,32 +44,44 @@ download_github_release() {
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # Add GitHub API rate limit check
-    release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
-    local http_status=$(curl -sL -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$repo/releases/latest")
-    local rate_remaining=$(curl -sL -I "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
+    # Add a small delay to avoid hitting rate limits
+    sleep 1
 
-    if [[ "$http_status" -ne 200 ]]; then
+    # Use GitHub Token if available (replace YOUR_TOKEN with actual token)
+    local github_token="YOUR_TOKEN"
+    local auth_header=""
+    if [ -n "$github_token" ]; then
+        auth_header="-H \"Authorization: Bearer $github_token\""
+    fi
+
+    # Fetch release info
+    release_info=$(curl -sL -H "Accept: application/vnd.github+json" $auth_header "https://api.github.com/repos/$repo/releases/latest")
+    local http_status=$(curl -sL -o /dev/null -w "%{http_code}" -H "Accept: application/vnd.github+json" $auth_header "https://api.github.com/repos/$repo/releases/latest")
+    local rate_remaining=$(curl -sL -I -H "Accept: application/vnd.github+json" $auth_header "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
+
+    # Check HTTP status
+    if [[ "$http_status" -eq 403 ]]; then
+        echo "::error::❌ GitHub API rate limit exceeded. Please wait or add a GitHub Token."
+        return 1
+    elif [[ "$http_status" -ne 200 ]]; then
         echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
         return 1
     fi
 
+    # Check rate limit
     if [[ "$rate_remaining" -lt 5 ]]; then
         echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
     fi
 
+    # Parse release info
     if ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
         echo "::error::❌ Invalid JSON response for $repo"
         return 1
     fi
 
-    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name')
+    # Extract release name (fallback to tag_name if name is empty)
+    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name // "Unknown Release"')
     download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | head -n 1)
-
-    if [ -z "$release_name" ]; then
-        echo "::warning::⚠️ Could not extract release name for $repo."
-        release_name="Unknown Release"
-    fi
 
     if [ -z "$download_url" ]; then
         echo "::error::❌ Could not find asset matching '$asset_pattern' for $repo"
