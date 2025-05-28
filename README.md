@@ -140,6 +140,7 @@
 - 2025-04-03：更换ldn_mitm为DefenderOfHyrule接手开发版本
 - 2025-04-03：新增插件averne作者的MasterVolume插件，以完成电视端音量调节
 - 2025-05-18：将sh脚本重构，zdm大佬在今天将插件推送到github发行了**喜大普奔**
+- 2025-05-28：将sh脚本通过cursor重构，彻底解决api请求问题（思路仍然来自huangqiang8大佬）
 
 # Tesla
 
