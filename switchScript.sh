@@ -28,58 +28,54 @@ download_github_release() {
 
     echo "--- Processing GitHub Release: $repo ---"
     echo "Fetching latest release info for $repo..."
+    # Use curl to fetch raw data, pipe through tr to remove problematic control characters,
+    # then pipe to jq to extract the required fields.
+    # We capture the entire output of the jq command into a variable.
+    # jq will output null or empty strings if fields are not found or parsing fails.
 
-    # Use curl to fetch raw data, pipe to awk for cleaning, then pipe to jq for parsing
-    # Check exit status after each command in the pipeline
-    if ! processed_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | \
-                         awk '{ s = $0; gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s); gsub(/\n/, "\\n", s); gsub(/\r/, "\\r", s); gsub(/\t/, "\\t", s); gsub(/\x08/, "\\b", s); gsub(/\x0c/, "\\f", s); print s; }' | \
-                         jq -s '.[0] | fromjson'); then
+    # Construct the jq filter to extract name/tag_name and the desired asset URL
+    local jq_filter='
+    . as $release |
+    ($release.name // $release.tag_name) as $release_name |
+    ($release.assets[] | select(.name | match("'"$asset_pattern"'")) | .browser_download_url) as $download_url |
+    {release_name: $release_name, download_url: $download_url} | tojson
+    '
 
-        # If any command in the pipeline failed, the overall command substitution fails
-        # We need to check the exit status of the last command in the pipeline (jq)
-        # However, directly getting the exit status of a specific command in a pipeline
-        # within a command substitution is tricky. A common pattern is to check the
-        # exit status of the command substitution itself, and infer the failure.
-        # The error messages from jq and previous commands will provide clues.
+    # Execute the pipeline: curl -> tr -> jq, and capture the output
+    # We are relying on jq to handle the JSON parsing. If it fails due to invalid chars,
+    # the command substitution will likely still capture some output or be empty/fail.
+    # We will check the exit status of the pipeline as the primary indicator of success/failure.
+    local processed_info_json=$(curl -sL "https://api.github.com/repos/$repo/releases/latest" | \
+                                 tr -cd '[:print:][:space:]' | \
+                                 jq -c --arg asset_pattern "$asset_pattern" "$jq_filter") # Use -c for compact output
 
-        # We can also add checks after each command if not in a pipeline, but
-        # for conciseness and avoiding intermediate variables, this is preferred.
-        # Let's just check the final command substitution status.
+    local pipeline_status=$? # Capture the exit status of the pipeline
 
-        echo "Error: Failed to fetch or process release info for $repo."
-        # The error messages from curl, awk, or jq should provide more details above.
+    # Check the pipeline's exit status
+    if [ $pipeline_status -ne 0 ]; then
+        echo "Error: Failed to fetch or process release info for $repo (Pipeline exit status $pipeline_status).\\033[31m failed\\\\033[0m." >&2
+        # We don't have the problematic raw output easily accessible here without re-fetching,
+        # but the jq error message should have been printed to stderr.
         return 1
     fi
 
-    # If command substitution was successful, processed_info contains the parsed JSON object.
-    # Now we can proceed with extracting information from processed_info.
+    # If the pipeline was successful, processed_info_json should contain a JSON string like {"release_name": "...", "download_url": "..."}
+    # Now parse this small, controlled JSON string to get the values.
+    release_name=$(echo "$processed_info_json" | jq -r '.release_name // "Unknown Release"') # Default to Unknown Release if null
+    download_url=$(echo "$processed_info_json" | jq -r '.download_url')
 
-    # Check if the fetched data (now in processed_info after successful jq parsing) is valid JSON
-    # This check is technically redundant if the jq -s '.[0] | fromjson' was successful,
-    # but kept for clarity if needed.
-    # if ! echo "$processed_info" | jq -e . > /dev/null; then
-    #     echo "Internal Error: Parsed data is unexpectedly not valid JSON.\\033[31m failed\\\\033[0m."
-    #     echo "Problematic processed info: $processed_info"
-    #     return 1
-    # fi
 
-    # If parsing is successful, proceed with extracting information from the parsed JSON object
-    release_name=$(echo "$processed_info" | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    download_url=$(echo "$processed_info" | jq -r ".assets[] | select(.name | match(\\\"$asset_pattern\\\")) | .browser_download_url")
-
-    if [ -z "$release_name" ]; then
-        echo "Warning: Could not extract release name for $repo."
-        release_name="Unknown Release"
-    fi
-
-    if [ -z "$download_url" ]; then
-        echo "Error: Could not find asset matching '$asset_pattern' for $repo\\033[31m failed\\\\033[0m.\"\n        echo \"Available assets:\"\n        echo "$processed_info" | jq -r \'.assets[].name\' # Use processed_info here
+    if [ -z "$download_url" ] || [ "$download_url" == "null" ]; then # Check for empty string or jq null output
+        echo "Error: Could not find asset matching '$asset_pattern' for $repo.\\033[31m failed\\\\033[0m."
+        # We could try to print available assets here, but that requires another jq call on potentially large JSON.
+        # For simplicity in this revised approach, we skip printing all assets on failure.
         return 1
     fi
 
     # Add release name to description.txt
     echo "$description_name $release_name" >> ../description.txt
-    echo "Downloading $local_filename from $download_url...\"\n
+    echo "Downloading $local_filename from $download_url..."
+
     # Download the file
     curl -sL "$download_url" -o "$local_filename"
 
@@ -89,16 +85,22 @@ download_github_release() {
     fi
 
     if [ ! -s "$local_filename" ]; then
-        echo "$local_filename download\\033[31m failed\\033[0m: Downloaded file is missing or empty.\"\n        return 1
+        echo "$local_filename download\\033[31m failed\\033[0m: Downloaded file is missing or empty.\\033[31m failed\\\\033[0m."
+        return 1
     fi
 
-    echo "$local_filename download\\033[32m success\\033[0m.\"\n
+    echo "$local_filename download\\033[32m success\\033[0m."
+
     # Process the downloaded file (unzip, move, or extract specific file)
     if [ -n "$target_dir" ]; then # If target_dir is provided, assume it\'s a zip file to be unzipped
-        echo "Unzipping $local_filename to $target_dir...\"\n        if unzip -oq "$local_filename" -d "$target_dir"; then
-             echo "$local_filename extraction\\033[32m success\\033[0m.\"\n        else
-             echo "$local_filename extraction\\033[31m failed\\033[0m.\"\n             # Optionally, keep the failed zip file for debugging
-             # rm "$local_filename"\n             return 1
+        echo "Unzipping $local_filename to $target_dir..."
+        if unzip -oq "$local_filename" -d "$target_dir"; then
+             echo "$local_filename extraction\\033[32m success\\033[0m."
+        else
+             echo "$local_filename extraction\\033[31m failed\\033[0m."
+             # Optionally, keep the failed zip file for debugging
+             # rm "$local_filename"
+             return 1
         fi
     elif [ -n "$specific_file" ] && [ -n "$specific_file_dest" ]; then # If specific_file and destination are provided, extract specific file
         echo "Extracting $specific_file from $local_filename to $specific_file_dest..."
@@ -107,10 +109,12 @@ download_github_release() {
         if unzip -oq "$local_filename" "$specific_file" -d "$specific_file_dest"; then
             echo "$specific_file extraction\\033[32m success\\033[0m.\"\n        else
             echo "$specific_file extraction\\033[31m failed\\033[0m.\"\n            # Optionally, keep the failed zip file for debugging
-            # rm "$local_filename"\n            return 1
+            # rm "$local_filename"
+            return 1
         fi
     else # Otherwise, assume it\'s a single file to be moved (default destination ./bootloader/payloads/)
-        echo "Moving $local_filename to ./bootloader/payloads/...\"\n        # Ensure destination directory exists for single file move
+        echo "Moving $local_filename to ./bootloader/payloads/..."
+        # Ensure destination directory exists for single file move
         mkdir -p ./bootloader/payloads/
         if mv "$local_filename" ./bootloader/payloads/; then
             echo "$local_filename move\\033[32m success\\033[0m.\"\n        else
