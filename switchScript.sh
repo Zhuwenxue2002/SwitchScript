@@ -35,14 +35,14 @@ download_github_release() {
     echo "$release_info"
     echo "---"
 
-    if [ $? -ne 0 ] || ! echo "$release_info" | jq -e . > /dev/null; then
+    if [ $? -ne 0 ] || ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
         echo "Error: Failed to fetch release info for $repo\033[31m failed\\033[0m."
         return 1
     fi
 
     # Extract release name and download URL based on asset pattern
-    release_name=$(echo "$release_info" | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    download_url=$(echo "$release_info" | jq -r ".assets[] | select(.name | match(\"$asset_pattern\")) | .browser_download_url")
+    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r ".assets[] | select(.name | match(\"$asset_pattern\")) | .browser_download_url")
 
     if [ -z "$release_name" ]; then
         echo "Warning: Could not extract release name for $repo."
@@ -52,7 +52,7 @@ download_github_release() {
     if [ -z "$download_url" ]; then
         echo "Error: Could not find asset matching '$asset_pattern' for $repo\033[31m failed\\033[0m."
         echo "Available assets:"
-        echo "$release_info" | jq -r '.assets[].name'
+        echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.assets[].name'
         return 1
     fi
 
