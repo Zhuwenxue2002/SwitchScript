@@ -99,7 +99,7 @@ download_github_release() {
     fi
 
     # 下载文件
-    echo "$description_name $release_name" >> ../description.txt
+    echo "$description_name | $release_name" >> ../description.txt
     echo "Downloading $local_filename from $download_url..."
     if ! curl -sL -f "$download_url" -o "$local_filename"; then
         echo "::error::❌ $local_filename download failed (HTTP $?)"
@@ -587,4 +587,4 @@ rm -f switch/haze.nro
 rm -f switch/reboot_to_hekate.nro
 rm -f switch/reboot_to_payload.nro
 
-echo "\033[32mYour Switch SD card is prepared!\033[0m"
+echo "✅ Your Switch SD card is prepared!"
