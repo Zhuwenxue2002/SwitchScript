@@ -21,7 +21,7 @@ glob_to_regex() {
     echo "$regex"
 }
 
-# 下载并处理 GitHub Release 资源的函数
+# 下载并处理 GitHub Release 资源的函数（优化版）
 # 参数：
 # $1: 仓库名称（例如 Atmosphere-NX/Atmosphere）
 # $2: 要下载的资源文件模式（例如 '*.zip'、'fusee.bin'）- 可以是正则表达式模式
@@ -45,11 +45,58 @@ download_github_release() {
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
 
-    # Add release name to description.txt
+    # 单次 GitHub API 请求（优化点）
+    response=$(curl -sL -i -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        "https://api.github.com/repos/$repo/releases/latest")
+
+    # 提取 HTTP 状态码
+    http_status=$(echo "$response" | grep -oP 'HTTP/\d\.\d \K\d+' | head -n 1)
+    # 提取速率限制
+    rate_remaining=$(echo "$response" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
+    # 提取 JSON 响应体
+    release_info=$(echo "$response" | awk '/^{/,0')
+
+    # 检查 HTTP 状态码
+    if [[ "$http_status" -ne 200 ]]; then
+        echo "::error::❌ HTTP $http_status: Failed to fetch release info for $repo"
+        return 1
+    fi
+
+    # 检查 API 速率限制
+    if [[ "$rate_remaining" -lt 5 ]]; then
+        echo "::warning::⚠️ GitHub API rate limit is low ($rate_remaining remaining)"
+    fi
+
+    # 验证 JSON 响应
+    if ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
+        echo "::error::❌ Invalid JSON response for $repo"
+        return 1
+    fi
+
+    # 提取发布名称和下载 URL
+    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name')
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | \
+        jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | \
+        head -n 1)
+
+    if [ -z "$release_name" ]; then
+        echo "::warning::⚠️ Could not extract release name for $repo."
+        release_name="Unknown Release"
+    fi
+
+    if [ -z "$download_url" ]; then
+        echo "::error::❌ Could not find asset matching '$asset_pattern' for $repo"
+        echo "Available assets:"
+        echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.assets[].name'
+        return 1
+    fi
+
+    # 添加描述信息
     echo "$description_name $release_name" >> ../description.txt
     echo "Downloading $local_filename from $download_url..."
 
-    # Download the file
+    # 下载文件
     if ! curl -sL -f "$download_url" -o "$local_filename"; then
         echo "::error::❌ $local_filename download failed (HTTP $?)"
         return 1
@@ -62,7 +109,7 @@ download_github_release() {
 
     echo "::notice::✅ $local_filename download success."
 
-    # 根据文件扩展名处理文件
+    # 处理下载的文件（解压/移动）
     if [[ "$local_filename" == *.zip ]]; then
         if [ -n "$target_dir" ]; then
             echo "Unzipping $local_filename to $target_dir..."
@@ -83,14 +130,10 @@ download_github_release() {
                 echo "::error::❌ $specific_file extraction failed"
                 return 1
             fi
-        else
-            echo "::warning::⚠️ No target directory or specific file specified for $local_filename"
         fi
     else
         local move_target_dir="./bootloader/payloads/"
-        if [ -n "$target_dir" ]; then
-            move_target_dir="$target_dir/"
-        fi
+        [ -n "$target_dir" ] && move_target_dir="$target_dir/"
 
         echo "Moving $local_filename to $move_target_dir..."
         mkdir -p "$move_target_dir"
