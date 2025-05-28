@@ -44,24 +44,7 @@ download_github_release() {
     # Replace problematic control characters and escape backslashes and quotes in the raw string before parsing with fromjson
     # This is a heuristic approach to fix potentially malformed JSON strings from the API.
     cleaned_info=$(echo "$release_info_raw" | \
-      awk '{
-        s = $0;
-        # Escape backslash and double quotes first
-        gsub(/\\/, "\\\\", s);
-        gsub(/"/, "\\\"", s);
-        # Escape common JSON control characters
-        gsub(/\n/, "\\n", s);
-        gsub(/\r/, "\\r", s);
-        gsub(/\t/, "\\t", s);
-        gsub(/\x08/, "\\b", s); # Backspace
-        gsub(/\x0c/, "\\f", s); # Form feed
-        # Note: This applies these replacements globally to the raw output.
-        # It assumes control characters, backslashes, and quotes only appear
-        # in contexts where they *should* be escaped (i.e., within string values).
-        # This is a reasonable heuristic for typical JSON data, but not foolproof
-        # for truly malformed or adversarial input.
-        print s;
-      }')
+      awk '{ s = $0; gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s); gsub(/\n/, "\\n", s); gsub(/\r/, "\\r", s); gsub(/\t/, "\\t", s); gsub(/\x08/, "\\b", s); gsub(/\x0c/, "\\f", s); print s; }')
 
     # Now attempt to parse the cleaned string as JSON using jq -s and fromjson
     # jq -s '.' slurps all input lines into a single array. We take the first element (the concatenated string)
