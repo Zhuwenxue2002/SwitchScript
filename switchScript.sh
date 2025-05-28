@@ -11,10 +11,10 @@ set -e
 glob_to_regex() {
     local glob="$1"
     local regex="$glob"
-    # Escape dots
-    regex=$(echo "$regex" | sed 's/\./\\./g')
-    # Convert * to .*
-    regex=$(echo "$regex" | sed 's/\*/.*/g')
+    # Escape special regex characters
+    regex=$(echo "$regex" | sed 's/\./\\./g; s/\[/\\[/g; s/\]/\\]/g; s/\^/\\^/g; s/\$/\\$/g')
+    # Convert glob patterns to regex
+    regex=$(echo "$regex" | sed 's/\*/.*/g; s/\?/./g')
     # Add anchors to match the whole string
     regex="^$regex$"
     echo "$regex"
@@ -34,7 +34,7 @@ download_github_release() {
     local asset_pattern="$2"
     local local_filename="$3"
     local target_dir="$4"
-    local description_name="${5:-$repo}" # Default to repo name if not provided
+    local description_name="${5:-$repo}"
     local specific_file="$6"
     local specific_file_dest="$7"
 
@@ -43,18 +43,22 @@ download_github_release() {
 
     echo "--- Processing $repo ---"
     echo "Fetching latest release info for $repo..."
-    release_info=$(curl -sL "https://api.github.com/repos/$repo/releases/latest")
+    
+    # Add GitHub API rate limit check
+    release_info=$(curl -sL -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/releases/latest")
+    local rate_remaining=$(curl -sL -I "https://api.github.com/repos/$repo/releases/latest" | grep -i "x-ratelimit-remaining" | tr -d '\r' | awk '{print $2}')
+
+    if [[ "$rate_remaining" -lt 5 ]]; then
+        echo "Warning: GitHub API rate limit is low ($rate_remaining remaining)"
+    fi
 
     if [ $? -ne 0 ] || ! echo "$release_info" | tr -d '[:cntrl:]' | jq -e . > /dev/null; then
         echo "Error: Failed to fetch release info for $repo\033[31m failed\\033[0m."
         return 1
     fi
 
-    # Extract release name and download URL based on asset pattern
-    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name') # Use name if available, otherwise tag_name
-    # Use the converted regex pattern in the jq match function, passing it as an argument
-    # Add | first to only select the first matching asset
-    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | match($regex)) | first | .browser_download_url')
+    release_name=$(echo "$release_info" | tr -d '[:cntrl:]' | jq -r '.name // .tag_name')
+    download_url=$(echo "$release_info" | tr -d '[:cntrl:]' | jq --arg regex "$regex_pattern" -r '.assets[] | select(.name | test($regex)) | .browser_download_url' | head -n 1)
 
     if [ -z "$release_name" ]; then
         echo "Warning: Could not extract release name for $repo."
