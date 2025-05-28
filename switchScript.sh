@@ -198,7 +198,7 @@ download_direct_file() {
 
          # Attempt to extract filename from URL for description if description_name is provided but no explicit name
          local base_filename=$(basename "$url")
-         echo "$description_name $base_filename" >> ../description.txt
+         echo "$description_name | $base_filename" >> ../description.txt
     fi
 
     echo "--- Finished processing direct download: $local_filename ---"
