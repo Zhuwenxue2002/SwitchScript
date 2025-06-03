@@ -21,11 +21,11 @@
 
 # 大气层个人整合包生成脚本
 
-**_支持系统版本：19.1.0_**
+**_支持系统版本：20.1.0_**
 
-**_支持大气层版本：1.8.1_**
+**_支持大气层版本：1.9.1_**
 
-**_支持hekate版本：6.2.2_**
+**_支持hekate版本：6.3.1_**
 
 - 此项目脚本fork自[huangqian8/SwitchScript: 大气层个人整合包生成脚本 (github.com)](https://github.com/huangqian8/SwitchScript)，由xiaobai进行精简
 
