@@ -29,7 +29,7 @@
 
 - 此项目脚本fork自[huangqian8/SwitchScript: 大气层个人整合包生成脚本 (github.com)](https://github.com/huangqian8/SwitchScript)，由xiaobai进行精简
 
-- 整合包明天四点会自动生成并发布，萌新玩家可直接下载使用
+- 整合包在每天四点会自动生成并发布，萌新玩家可直接下载使用
 
 - 使用linu系统运行则需要jq依赖，可fork到自己仓库重新开发
 
