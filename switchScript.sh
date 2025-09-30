@@ -345,11 +345,10 @@ download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/
 if [ -f "FPSLocker-Warehouse-4.zip" ]; then
     echo "::notice::Extracting FPSLocker-Warehouse-4.zip to the root directory..."
     if unzip -oq "FPSLocker-Warehouse-4.zip" -d "./"; then
-#        rm "FPSLocker-Warehouse-4.zip"
-#        rm "README.md"
-#        rm "FORMAT.md"
-#        rm "CheckUpdate.py"
-#        rm -rf "Methodology"
+        mv FPSLocker-Warehouse-4/atmosphere ./
+        mv FPSLocker-Warehouse-4/SaltySD ./
+        rm -rf FPSLocker-Warehouse-4
+        rm "FPSLocker-Warehouse-4.zip"
         echo "::notice::✅ FPSLocker-Warehouse content extracted and zip removed."
     else
         echo "::error::❌ Failed to extract FPSLocker-Warehouse-4.zip to root directory."
