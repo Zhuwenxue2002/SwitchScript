@@ -340,6 +340,20 @@ download_github_release "masagrator/ReverseNX-RT" "ReverseNX-RT-ovl.ovl" "Revers
 #download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
 download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "MasterVolume" || { echo "::error::❌ MasterVolume failed"; exit 1; }
 
+# ADDED: FPSLocker-Warehouse (direct download, extract specific folders, consistent with Status-Monitor)
+download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/refs/heads/v4.zip" "FPSLocker-Warehouse-4.zip" "./" "FPSLocker-Warehouse" || { echo "::error::❌ FPSLocker-Warehouse direct download failed"; exit 1; }
+# 解压并清理 FPSLocker-Warehouse
+if [ -f "FPSLocker-Warehouse-4.zip" ]; then
+    echo "::notice::Extracting 'FPSLocker-Warehouse-v4/atmosphere/' and 'FPSLocker-Warehouse-v4/SaltySD/' from FPSLocker-Warehouse-4.zip..."
+    if unzip -oq "FPSLocker-Warehouse-4.zip" "FPSLocker-Warehouse-v4/atmosphere/*" "FPSLocker-Warehouse-v4/SaltySD/*" -d "./"; then
+        rm "FPSLocker-Warehouse-4.zip"
+        echo "::notice::✅ FPSLocker-Warehouse content extracted and zip removed."
+    else
+        echo "::error::❌ Failed to extract specific folders from $FPSLOCKER_WAREHOUSE_ZIP."
+        echo "::error::❌ Failed to extract specific folders from FPSLocker-Warehouse-4.zip."
+        exit 1
+    fi
+fi
 
 download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 # 解压并清理
@@ -351,6 +365,7 @@ if [ -f "Status-Monitor-Overlay.zip" ]; then
     }
     echo "::notice::✅ Status-Monitor-Overlay installed"
 fi
+
 # ======================
 # 新增配置文件生成
 # ======================
