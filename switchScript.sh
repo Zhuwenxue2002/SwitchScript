@@ -344,11 +344,9 @@ download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "M
 download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/refs/heads/v4.zip" "FPSLocker-Warehouse-4.zip" "./" "FPSLocker-Warehouse" || { echo "::error::❌ FPSLocker-Warehouse direct download failed"; exit 1; }
 # 解压并清理 FPSLocker-Warehouse
 if [ -f "FPSLocker-Warehouse-4.zip" ]; then
-    echo "::notice::Extracting 'FPSLocker-Warehouse-v4/atmosphere/' and 'FPSLocker-Warehouse-v4/SaltySD/' from FPSLocker-Warehouse-4.zip..."
-    if unzip -oq "FPSLocker-Warehouse-4.zip" "FPSLocker-Warehouse-v4/atmosphere/*" "FPSLocker-Warehouse-v4/SaltySD/*" -d "./"; then
+    echo "::notice::Extracting 'atmosphere/' and 'SaltySD/' from FPSLocker-Warehouse-4.zip..."
+    if unzip -oq "FPSLocker-Warehouse-4.zip" "atmosphere/*" "SaltySD/*" -d "./"; then
         rm "FPSLocker-Warehouse-4.zip"
-        echo "::notice::✅ FPSLocker-Warehouse content extracted and zip removed."
-    else
         echo "::error::❌ Failed to extract specific folders from $FPSLOCKER_WAREHOUSE_ZIP."
         echo "::error::❌ Failed to extract specific folders from FPSLocker-Warehouse-4.zip."
         exit 1
