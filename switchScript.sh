@@ -332,9 +332,13 @@ download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" ".
 download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
 download_github_release "zdm65477730/ldn_mitm" "*.zip" "ldn_mitm.zip" "./" "ldn_mit" || { echo "::error::❌ ldn_mit processing failed"; exit 1; }
 download_github_release "zdm65477730/ovl-sysmodules" "*.zip" "ovl-sysmodules.zip" "./" "ovl-sysmodules" || { echo "::error::❌ ovl-sysmodules failed"; exit 1; }
-download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
-download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
+#download_github_release "zdm65477730/ReverseNX-RT" "*.zip" "ReverseNX-RT.zip" "./" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT failed"; exit 1; }
+download_github_release "masagrator/SaltyNX" "*.zip" "SaltyNX.zip" "./" "SaltyNX" || { echo "::error::❌ SaltyNX processing failed"; exit 1; }
+download_github_release "masagrator/FPSLocker" "FPSLocker.ovl" "FPSLocker.ovl" "./switch/.overlays" "FPSLocker" || { echo "::error::❌ FPSLocker.ovl failed"; exit 1; }
+download_github_release "masagrator/ReverseNX-RT" "ReverseNX-RT-ovl.ovl" "ReverseNX-RT-ovl.ovl" "./switch/.overlays" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT-ovl.ovl download failed"; exit 1; }
+#download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
 download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "MasterVolume" || { echo "::error::❌ MasterVolume failed"; exit 1; }
+
 
 download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 # 解压并清理
@@ -415,7 +419,7 @@ launch_args=
 custom_name=状态监视
 custom_version=
 
-[ReverseNX-RT.ovl]
+[ReverseNX-RT-ovl.ovl]
 priority=20
 star=false
 hide=false
