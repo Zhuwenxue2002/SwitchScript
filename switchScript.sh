@@ -343,12 +343,26 @@ download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "M
 download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/refs/heads/v4.zip" "FPSLocker-Warehouse-4.zip" "./" "FPSLocker-Warehouse" || { echo "::error::❌ FPSLocker-Warehouse direct download failed"; exit 1; }
 # 解压并清理 FPSLocker-Warehouse
 if [ -f "FPSLocker-Warehouse-4.zip" ]; then
-    echo "::notice::Extracting 'FPSLocker-Warehouse-v4/atmosphere/' and 'FPSLocker-Warehouse-v4/SaltySD/' from FPSLocker-Warehouse-4.zip..."
-    if unzip -oq "FPSLocker-Warehouse-4.zip" "FPSLocker-Warehouse-v4/atmosphere/*" "FPSLocker-Warehouse-v4/SaltySD/*" -d "./"; then
+    TEMP_DIR="temp_fpslocker_warehouse_extract"
+    TOP_LEVEL_FOLDER="FPSLocker-Warehouse-v4"
+
+    echo "::notice::Extracting FPSLocker-Warehouse-4.zip to temporary directory and moving specific folders..."
+    mkdir -p "$TEMP_DIR" || { echo "::error::❌ Failed to create temporary directory $TEMP_DIR"; exit 1; }
+
+    if unzip -oq "FPSLocker-Warehouse-4.zip" -d "$TEMP_DIR"; then
+        # Now move the desired folders from the temporary extract path to the root
+        if mv "$TEMP_DIR/$TOP_LEVEL_FOLDER/atmosphere" "./atmosphere" && \
+           mv "$TEMP_DIR/$TOP_LEVEL_FOLDER/SaltySD" "./SaltySD"; then
+            echo "::notice::✅ FPSLocker-Warehouse 'atmosphere' and 'SaltySD' folders moved to root."
+        else
+            echo "::error::❌ Failed to move 'atmosphere' or 'SaltySD' from temp directory to root."
+            rm -rf "$TEMP_DIR" # Clean up temp dir even on move failure
+            exit 1
+        fi
         rm "FPSLocker-Warehouse-4.zip"
-        echo "::notice::✅ FPSLocker-Warehouse content extracted and zip removed."
+        rm -rf "$TEMP_DIR" # Clean up temporary directory
     else
-        echo "::error::❌ Failed to extract specific folders (FPSLocker-Warehouse-v4/atmosphere, FPSLocker-Warehouse-v4/SaltySD) from FPSLocker-Warehouse-4.zip."
+        echo "::error::❌ Failed to extract FPSLocker-Warehouse-4.zip to temporary directory."
         exit 1
     fi
 fi
