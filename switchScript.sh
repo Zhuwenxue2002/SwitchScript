@@ -345,8 +345,8 @@ download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/
 if [ -f "FPSLocker-Warehouse-4.zip" ]; then
     echo "::notice::Extracting FPSLocker-Warehouse-4.zip to the root directory..."
     if unzip -oq "FPSLocker-Warehouse-4.zip" -d "./"; then
-        mv FPSLocker-Warehouse-4/atmosphere ./
-        mv FPSLocker-Warehouse-4/SaltySD ./
+        cp -r FPSLocker-Warehouse-4/atmosphere ./
+        cp -r FPSLocker-Warehouse-4/SaltySD ./
         rm -rf FPSLocker-Warehouse-4
         rm "FPSLocker-Warehouse-4.zip"
         echo "::notice::✅ FPSLocker-Warehouse content extracted and zip removed."
