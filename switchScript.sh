@@ -345,7 +345,7 @@ download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/
 # 解压并清理 FPSLocker-Warehouse
 if [ -f "FPSLocker-Warehouse-4.zip" ]; then
     echo "::notice::Extracting 'atmosphere/' and 'SaltySD/' from FPSLocker-Warehouse-4.zip..."
-    if unzip -oq "FPSLocker-Warehouse-4.zip" "atmosphere/*" "SaltySD/*" -d "./"; then
+  if unzip -oq "FPSLocker-Warehouse-4.zip" "atmosphere" "SaltySD" -d "./"; then
         rm "FPSLocker-Warehouse-4.zip"
         echo "::error::❌ Failed to extract specific folders from $FPSLOCKER_WAREHOUSE_ZIP."
         echo "::error::❌ Failed to extract specific folders from FPSLocker-Warehouse-4.zip."
