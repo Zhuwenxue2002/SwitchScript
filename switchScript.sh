@@ -265,7 +265,7 @@ download_github_release "meganukebmp/Switch_90DNS_tester" "*.nro" "Switch_90DNS_
 download_github_release "rashevskyv/dbi" "*.nro" "DBI.nro" "./switch/DBI" "DBI" || { echo "DBI processing failed. Exiting."; exit 1; }
 
 # Fetch latest Awoo Installer (downloads a .zip)
-download_github_release "dragonflylee/Awoo-Installer" "*.zip" "Awoo-Installer.zip" "./" "Awoo Installer" || { echo "Awoo Installer processing failed. Exiting."; exit 1; }
+download_github_release "Huntereb/Awoo-Installer" "*.zip" "Awoo-Installer.zip" "./" "Awoo Installer" || { echo "Awoo Installer processing failed. Exiting."; exit 1; }
 
 # Fetch latest Hekate-toolbox (downloads a .nro)
 download_github_release "WerWolv/Hekate-Toolbox" "*.nro" "HekateToolbox.nro" "./switch/HekateToolbox" "HekateToolbox" || { echo "HekateToolbox processing failed. Exiting."; exit 1; }
