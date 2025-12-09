@@ -280,7 +280,7 @@ download_github_release "J-D-K/JKSV" "*.nro" "JKSV.nro" "./switch/JKSV" "JKSV" |
 download_github_release "HamletDuFromage/aio-switch-updater" "*.zip" "aio-switch-updater.zip" "./" "aio-switch-updater" || { echo "aio-switch-updater processing failed. Exiting."; exit 1; }
 
 # Fetch latest wiliwili (downloads a .zip, needs specific file extraction)
-download_github_release "xfangfang/wiliwili" "*NintendoSwitch.zip" "wiliwili-NintendoSwitch.zip" "" "wiliwili" "wiliwili/wiliwili.nro" "./switch/wiliwili" || { echo "wiliwili processing failed. Exiting."; exit 1; }
+download_github_release "xfangfang/wiliwili" "*NintendoSwitch.zip" "wiliwili-NintendoSwitch.zip" "" "wiliwili" "wiliwili-NintendoSwitch/wiliwili/wiliwili.nro" "./switch/wiliwili" || { echo "wiliwili processing failed. Exiting."; exit 1; }
 
 # Fetch latest SimpleModDownloader (downloads a .nro)
 download_github_release "PoloNX/SimpleModDownloader" "*.nro" "SimpleModDownloader.nro" "./switch/SimpleModDownloader" "SimpleModDownloader" || { echo "SimpleModDownloader processing failed. Exiting."; exit 1; }
