@@ -373,7 +373,7 @@ fi
 
 # 1. overlays.ini (特斯拉插件配置)
 cat > ./config/ultrahand/overlays.ini << 'ENDOFFILE'
-[sys-patch-overlay.ovl]
+[sys-patch.ovl]
 priority=20
 star=false
 hide=false
