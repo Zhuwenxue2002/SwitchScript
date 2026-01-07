@@ -328,7 +328,7 @@ download_github_release "halop/OC_Toolkit_SC_EOS" "sys-clk.zip" "sys-clk.zip" ".
 download_github_release "ppkantorski/Ultrahand-Overlay" "ovlmenu.ovl" "ovlmenu.ovl" "./switch/.overlays" "Ultrahand" || { echo "::error::❌ Ultrahand menu failed"; exit 1; }
 download_github_release "ppkantorski/Ultrahand-Overlay" "lang.zip" "lang.zip" "./config/ultrahand/lang" "Ultrahand Lang" || { echo "::error::❌ Language pack failed"; exit 1; }
 #download_github_release "zdm65477730/sys-patch" "*.zip" "sys-patch.zip" "./" "Sys-Patch" || { echo "::error::❌ Sys-Patch processing failed"; exit 1; }
-#download_github_release "borntohonk/sys-patch" "*.zip" "sys-patch.zip" "./" "Sys-Patch" || { echo "::error::❌ Sys-Patch processing failed"; exit 1; }
+download_github_release "borntohonk/sys-patch" "*.zip" "sys-patch.zip" "./" "Sys-Patch" || { echo "::error::❌ Sys-Patch processing failed"; exit 1; }
 
 # 3. 系统工具插件
 download_github_release "zdm65477730/EdiZon-Overlay" "*.zip" "EdiZon.zip" "./" "EdiZon" || { echo "::error::❌ EdiZon failed"; exit 1; }
@@ -340,6 +340,7 @@ download_github_release "masagrator/FPSLocker" "FPSLocker.ovl" "FPSLocker.ovl" "
 download_github_release "masagrator/ReverseNX-RT" "ReverseNX-RT-ovl.ovl" "ReverseNX-RT-ovl.ovl" "./switch/.overlays" "ReverseNX-RT" || { echo "::error::❌ ReverseNX-RT-ovl.ovl download failed"; exit 1; }
 #download_github_release "zdm65477730/Fizeau" "*.zip" "Fizeau.zip" "./" "Fizeau" || { echo "::error::❌ Fizeau failed"; exit 1; }
 download_github_release "averne/MasterVolume" "*.zip" "MasterVolume.zip" "./" "MasterVolume" || { echo "::error::❌ MasterVolume failed"; exit 1; }
+download_github_release "masagrator/Status-Monitor-Overlay" "*.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor-Overlay" || { echo "::error::❌ Status-Monitor-Overlay failed"; exit 1; }
 
 download_direct_file "https://github.com/masagrator/FPSLocker-Warehouse/archive/refs/heads/v4.zip" "FPSLocker-Warehouse-4.zip" "./" "FPSLocker-Warehouse" || { echo "::error::❌ FPSLocker-Warehouse direct download failed"; exit 1; }
 # 解压并清理 FPSLocker-Warehouse (全解压到根目录并清理)
@@ -357,16 +358,16 @@ if [ -f "FPSLocker-Warehouse-4.zip" ]; then
     fi
 fi
 
-download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
+#download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 # 解压并清理
-if [ -f "Status-Monitor-Overlay.zip" ]; then
-    unzip -oq Status-Monitor-Overlay.zip -d ./ && \
-    rm Status-Monitor-Overlay.zip || {
-        echo "::error::❌ Failed to process Status-Monitor-Overlay"
-        exit 1
-    }
-    echo "::notice::✅ Status-Monitor-Overlay installed"
-fi
+#if [ -f "Status-Monitor-Overlay.zip" ]; then
+#    unzip -oq Status-Monitor-Overlay.zip -d ./ && \
+#    rm Status-Monitor-Overlay.zip || {
+#        echo "::error::❌ Failed to process Status-Monitor-Overlay"
+#        #     
+#    }
+#    echo "::notice::✅ Status-Monitor-Overlay installed"
+#fi
 
 # ======================
 # 新增配置文件生成
