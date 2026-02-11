@@ -358,6 +358,24 @@ if [ -f "FPSLocker-Warehouse-4.zip" ]; then
     fi
 fi
 
+# 下载 ovlEdiZon-online.zip
+download_direct_file \
+    "https://raw.githubusercontent.com/Zhuwenxue2002/SwitchPlugins/main/plugins/ovlEdiZon-online.zip" \
+    "ovlEdiZon-online.zip" \
+    "./" \
+    "ovlEdiZon-online" || { echo "::error::❌ ovlEdiZon-online direct download failed"; exit 1; }
+# 解压并清理 ovlEdiZon-online.zip
+if [ -f "ovlEdiZon-online.zip" ]; then
+    echo "::notice::Extracting ovlEdiZon-online.zip to the root directory..."
+    if unzip -oq "ovlEdiZon-online.zip" -d "./"; then
+        rm "ovlEdiZon-online.zip"
+        echo "::notice::✅ ovlEdiZon-online.zip extracted and zip removed."
+    else
+        echo "::error::❌ Failed to extract ovlEdiZon-online.zip to root directory."
+        exit 1
+    fi
+fi
+
 #download_direct_file "https://github.com/wei2ard/AutoFetch/releases/download/latest/Status-Monitor-Overlay.zip" "Status-Monitor-Overlay.zip" "./" "Status-Monitor" || { echo "::error::❌ Status-Monitor failed"; exit 1; }
 # 解压并清理
 #if [ -f "Status-Monitor-Overlay.zip" ]; then
